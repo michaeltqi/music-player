@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:contentDescription="@string/playlisticon"
+        android:src="@drawable/playlist"
+        android:layout_width="65dp"
+        android:layout_height="65dp"
+        android:paddingStart="10dp"
+        android:paddingLeft="10dp"
+        android:paddingTop="9dp"
+        android:paddingEnd="8dp"
+        android:paddingRight="8dp"
+        android:paddingBottom="9dp"
+        android:tint="@color/textPrimaryColor" />
+
+    <TableLayout
+        android:id="@+id/NowPlayingTable"
+        android:layout_width="match_parent"
+        android:layout_height="65dp"
+        style="@style/MainSelectableItemBackground">
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingLeft="75dp"
+            android:paddingStart="75dp"
+            android:paddingRight="40dp"
+            android:paddingEnd="40dp"
+            android:paddingTop="18dp">
+
+            <TextView
+                android:id="@+id/NowPlaying"
+                android:layout_width="match_parent"
+                android:layout_height="65dp"
+                android:textColor="@color/textPrimaryColor"
+                android:textSize="20sp"
+                android:text="Now Playing"/>
+        </TableRow>
+
+    </TableLayout>
+
+    <ImageView
+        android:id="@+id/NowPlayingDropdown"
+        android:contentDescription="@string/dots"
+        android:src="@drawable/dots"
+        android:scaleType="centerInside"
+        style="@style/SecondarySelectableItemBackground"
+        android:paddingTop="7dp"
+        android:paddingLeft="5dp"
+        android:paddingStart="5dp"
+        android:paddingRight="5dp"
+        android:paddingEnd="5dp"
+        android:paddingBottom="7dp"
+        android:layout_width="40dp"
+        android:layout_height="65dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:tint="@color/textSecondaryColor" />
+
+</RelativeLayout>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/PlaylistBar"
+    android:background="@color/colorPrimary">
+
+    <ImageView
+        android:id="@+id/ShuffleSongs"
+        android:contentDescription="@string/shufflesongs"
+        android:src="@drawable/shuffle"
+        android:tint="@color/textPrimaryColor"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:paddingTop="5dp"
+        android:paddingRight="5dp"
+        android:paddingEnd="5dp"
+        android:paddingBottom="5dp"
+        android:paddingLeft="5dp"
+        android:paddingStart="5dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintRight_toLeftOf="@+id/PlaySongs"
+        style="@style/SecondarySelectableItemBackground"/>
+
+    <ImageView
+        android:id="@+id/PlaySongs"
+        android:contentDescription="@string/playsongs"
+        android:src="@drawable/play"
+        android:tint="@color/textPrimaryColor"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        style="@style/SecondarySelectableItemBackground"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

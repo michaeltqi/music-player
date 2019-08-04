@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/MainActivity"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity" >
+
+    <com.sothree.slidinguppanel.SlidingUpPanelLayout
+        android:id="@+id/SlidingUpPanelLayout"
+        xmlns:sothree="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="bottom"
+        sothree:umanoPanelHeight="56dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/Body"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <com.google.android.material.tabs.TabLayout
+                    android:id="@+id/TabLayout"
+                    android:layout_width="0dp"
+                    android:layout_height="50dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:tabTextColor="@color/textPrimaryColor"
+                    app:tabBackground="@color/colorPrimary"
+                    app:tabIndicatorColor="@color/textPrimaryColor">
+
+                </com.google.android.material.tabs.TabLayout>
+
+                <androidx.viewpager.widget.ViewPager
+                    android:id="@+id/SongViewPager"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintTop_toBottomOf="@id/TabLayout"
+                    app:layout_constraintBottom_toBottomOf="parent">
+                </androidx.viewpager.widget.ViewPager>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <SeekBar
+            android:id="@+id/ProgressBar"
+            android:layout_width="match_parent"
+            android:layout_height="4dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:padding="0dp"
+            android:paddingStart="0dp"
+            android:paddingEnd="0dp"
+            android:enabled="false"
+            android:thumb="@null" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" >
+
+            <include
+                layout="@layout/bottom_bar"
+                android:id="@+id/BottomBar"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+            <include
+                layout="@layout/song"
+                android:id="@+id/Song"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="invisible" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </com.sothree.slidinguppanel.SlidingUpPanelLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

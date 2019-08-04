@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorSecondaryDark">
+
+    <ImageView
+        android:id="@+id/AlbumIcon"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:contentDescription="@string/albumicon"
+        android:visibility="invisible"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/BottomTitle"
+        android:layout_width="0dp"
+        android:layout_height="28dp"
+        android:paddingStart="6dp"
+        android:paddingLeft="6dp"
+        android:paddingTop="7dp"
+        android:paddingEnd="6dp"
+        android:paddingRight="6dp"
+        android:textColor="@color/textPrimaryColor"
+        android:textSize="16sp"
+        android:visibility="invisible"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/PlayPauseB"
+        app:layout_constraintLeft_toRightOf="@id/AlbumIcon"
+        app:layout_constraintRight_toLeftOf="@id/PlayPauseB"
+        app:layout_constraintStart_toEndOf="@id/AlbumIcon" />
+
+    <TextView
+        android:id="@+id/BottomArtist"
+        android:layout_width="0dp"
+        android:layout_height="28dp"
+        android:paddingStart="6dp"
+        android:paddingLeft="6dp"
+        android:paddingTop="2dp"
+        android:paddingEnd="6dp"
+        android:paddingRight="6dp"
+        android:textColor="@color/textSecondaryColor"
+        android:textSize="12sp"
+        android:visibility="invisible"
+        app:layout_constraintTop_toBottomOf="@id/BottomTitle"
+        app:layout_constraintEnd_toStartOf="@id/PlayPauseB"
+        app:layout_constraintLeft_toRightOf="@id/AlbumIcon"
+        app:layout_constraintRight_toLeftOf="@id/PlayPauseB"
+        app:layout_constraintStart_toEndOf="@id/AlbumIcon" />
+
+    <ImageView
+        android:id="@+id/PlayPauseB"
+        style="@style/SecondarySelectableItemBackground"
+        android:layout_width="45dp"
+        android:layout_height="56dp"
+        android:contentDescription="@string/playpause"
+        android:tint="@color/textSecondaryColor"
+        android:visibility="invisible"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/MainMenu" />
+
+    <ImageView
+        android:id="@+id/MainMenu"
+        style="@style/SecondarySelectableItemBackground"
+        android:layout_width="44dp"
+        android:layout_height="56dp"
+        android:contentDescription="@string/dots"
+        android:paddingStart="9dp"
+        android:paddingLeft="9dp"
+        android:paddingEnd="9dp"
+        android:paddingRight="9dp"
+        android:scaleType="centerInside"
+        android:src="@drawable/dots"
+        android:tint="@color/textSecondaryColor"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

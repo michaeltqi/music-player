@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="210dp">
+
+    <ImageView
+        android:id="@+id/PlaylistIcon"
+        android:contentDescription="@string/playlistimage"
+        android:src="@drawable/playlist"
+        android:tint="@color/textPrimaryColor"
+        android:layout_width="match_parent"
+        android:layout_height="160dp"
+        android:paddingTop="70dp"
+        android:paddingBottom="10dp"/>
+
+    <TextView
+        android:id="@+id/PlaylistCount"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_below="@id/PlaylistIcon"
+        android:textSize="18sp"
+        android:textColor="@color/textPrimaryColor"
+        android:gravity="center_horizontal" />
+
+</RelativeLayout>

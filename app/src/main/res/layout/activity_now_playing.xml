@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".NowPlayingActivity">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/NowPlayingBar"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@color/colorPrimary">
+
+        <ImageView
+            android:id="@+id/ShuffleNowPlaying"
+            android:contentDescription="@string/shufflesongs"
+            android:src="@drawable/shuffle"
+            android:tint="@color/textPrimaryColor"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:paddingTop="5dp"
+            android:paddingRight="5dp"
+            android:paddingEnd="5dp"
+            android:paddingBottom="5dp"
+            android:paddingLeft="5dp"
+            android:paddingStart="5dp"
+            app:layout_constraintRight_toLeftOf="@+id/PlayNowPlaying"
+            style="@style/SecondarySelectableItemBackground"/>
+
+        <ImageView
+            android:id="@+id/PlayNowPlaying"
+            android:contentDescription="@string/playsongs"
+            android:src="@drawable/play"
+            android:tint="@color/textPrimaryColor"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            style="@style/SecondarySelectableItemBackground"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/NowPlayingPager"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@id/NowPlayingBar"
+        app:layout_constraintBottom_toTopOf="@id/BottomBar" />
+
+    <SeekBar
+        android:id="@+id/ProgressBar"
+        android:layout_width="match_parent"
+        android:layout_height="4dp"
+        app:layout_constraintBottom_toTopOf="@id/BottomBar"
+        android:padding="0dp"
+        android:paddingStart="0dp"
+        android:paddingEnd="0dp"
+        android:enabled="false"
+        android:thumb="@null" />
+
+    <include
+        layout="@layout/bottom_bar"
+        android:id="@+id/BottomBar"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

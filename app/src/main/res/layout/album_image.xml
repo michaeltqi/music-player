@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ImageView
+    android:id="@+id/AlbumImage"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingTop="30dp"
+    android:paddingLeft="30dp"
+    android:paddingStart="30dp"
+    android:paddingBottom="30dp"
+    android:paddingRight="30dp"
+    android:paddingEnd="30dp" >
+
+</ImageView>

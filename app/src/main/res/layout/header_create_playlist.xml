@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    style="@style/MainSelectableItemBackground">
+
+    <ImageView
+        android:contentDescription="@string/create"
+        android:src="@drawable/createplaylist"
+        android:layout_width="65dp"
+        android:layout_height="65dp"
+        android:paddingStart="12dp"
+        android:paddingLeft="12dp"
+        android:paddingTop="12dp"
+        android:paddingEnd="12dp"
+        android:paddingRight="12dp"
+        android:paddingBottom="12dp"
+        android:tint="@color/colorPrimary" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="65dp"
+        android:textColor="@color/colorPrimary"
+        android:textSize="20sp"
+        android:paddingLeft="75dp"
+        android:paddingStart="75dp"
+        android:paddingRight="40dp"
+        android:paddingEnd="40dp"
+        android:paddingTop="17dp"
+        android:text="@string/createplaylist"/>
+
+</RelativeLayout>

@@ -1,0 +1,25 @@
+<resources>
+    <string name="app_name">Music Player</string>
+    <string name="dropdown">Dropdown</string>
+    <string name="add">Add to Playlist</string>
+    <string name="dots">Dots</string>
+    <string name="refresh">Refresh</string>
+    <string name="playpause">PlayPause</string>
+    <string name="albumicon">AlbumIcon</string>
+    <string name="deleteplaylist">Delete</string>
+    <string name="playlisticon">PlaylistIcon</string>
+    <string name="create">CreatePlaylist</string>
+    <string name="createplaylist">Create Playlist</string>
+    <string name="playlist_name">Playlist Name</string>
+    <string name="playsongs">PlaySongs</string>
+    <string name="shufflesongs">ShuffleSongs</string>
+    <string name="playlistimage">PlaylistImage</string>
+    <string name="shuffleplaylist">ShufflePlaylist</string>
+    <string name="previoustrack">PreviousTrack</string>
+    <string name="nexttrack">NextTrack</string>
+    <string name="loopplaylist">LoopPlaylist</string>
+    <string name="background">Background</string>
+    <string name="genreicon">GenreIcon</string>
+    <string name="genreimage">GenreImage</string>
+    <string name="albumimage">AlbumImage</string>
+</resources>
