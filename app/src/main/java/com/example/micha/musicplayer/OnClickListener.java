@@ -363,11 +363,12 @@ public class OnClickListener {
     static class PlaySongList implements View.OnClickListener {
         Activity activity;
         List<Music> songs;
+        boolean shuffle;
 
         PlaySongList(Activity activity, List<Music> songs, boolean shuffle, boolean nowplaying) {
             this.activity = activity;
             this.songs = nowplaying ? nowPlaying.get(nowPlayingPosition) : songs;
-            MainActivity.shuffle = shuffle;
+            this.shuffle = shuffle;
         }
 
         @Override
@@ -375,6 +376,8 @@ public class OnClickListener {
             if (mp.isPlaying()) {
                 mp.stop();
             }
+
+            MainActivity.shuffle = shuffle;
 
             original.set(nowPlayingPosition, songs);
             nowPlaying.set(nowPlayingPosition, new ArrayList<>(songs));
