@@ -351,8 +351,8 @@ public class Adapter {
         List<Music> songs;
         boolean multiple;
         View header;
-        static final int HEADER = 0;
-        static final int SONG = 1;
+        int headerOffset;
+        static final int HEADER = -1;
 
         Song(Activity activity, FragmentManager fragmentManager, List<Music> songs, boolean multiple, View header) {
             this.activity = activity;
@@ -360,6 +360,7 @@ public class Adapter {
             this.songs = songs;
             this.multiple = multiple;
             this.header = header;
+            this.headerOffset = header == null ? 0 : 1;
         }
 
         public static class HeaderViewHolder extends RecyclerView.ViewHolder {
@@ -392,7 +393,7 @@ public class Adapter {
         public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
             if (viewHolder instanceof SongViewHolder) {
                 View songView = ((SongViewHolder) viewHolder).view;
-                Music song = songs.get(position - (header == null ? 0 : 1));
+                Music song = songs.get(position - headerOffset);
                 String title = song.getTitle() == null ? song.getPath() : song.getTitle();
                 String artist = song.getArtist() == null ? "" : song.getArtist();
                 String duration = Utility.formatDuration(song.getDuration() == null ? 0 : Long.parseLong(song.getDuration()) / 1000);
@@ -404,7 +405,7 @@ public class Adapter {
                     ((TextView) songView.findViewById(R.id.Artist)).setTextColor(activity.getResources().getColor(R.color.colorPrimary));
                 }
 
-                songView.setOnClickListener(new OnClickListener.PlaySong2(activity, songs, position - (header == null ? 0 : 1), multiple));
+                songView.setOnClickListener(new OnClickListener.PlaySong2(activity, songs, position - headerOffset, multiple));
                 songView.findViewById(R.id.SongDropdown).setOnClickListener(new OnClickListener.SongMenu(activity, fragmentManager, song));
             }
         }
@@ -419,12 +420,12 @@ public class Adapter {
             if (header != null && position == 0) {
                 return HEADER;
             }
-            return SONG;
+            return position + headerOffset;
         }
 
         @Override
         public int getItemCount() {
-            return songs.size() + (header == null ? 0 : 1);
+            return songs.size() + headerOffset;
         }
     }
 }
