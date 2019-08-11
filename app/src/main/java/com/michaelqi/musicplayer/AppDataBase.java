@@ -1,4 +1,4 @@
-package com.example.micha.musicplayer;
+package com.michaelqi.musicplayer;
 
 import androidx.room.Database;
 import androidx.room.RoomDatabase;

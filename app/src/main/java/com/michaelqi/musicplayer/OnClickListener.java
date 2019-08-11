@@ -1,10 +1,9 @@
-package com.example.micha.musicplayer;
+package com.michaelqi.musicplayer;
 
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.net.Uri;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,6 +16,7 @@ import androidx.appcompat.widget.PopupMenu;
 import androidx.fragment.app.FragmentManager;
 import androidx.viewpager.widget.ViewPager;
 
+import com.example.micha.musicplayer.R;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
 import java.io.File;
@@ -25,21 +25,21 @@ import java.util.Collections;
 import java.util.List;
 
 import static android.view.View.VISIBLE;
-import static com.example.micha.musicplayer.MainActivity.LOOP_ALL;
-import static com.example.micha.musicplayer.MainActivity.LOOP_CURRENT;
-import static com.example.micha.musicplayer.MainActivity.NO_LOOP;
-import static com.example.micha.musicplayer.MainActivity.addSong;
-import static com.example.micha.musicplayer.MainActivity.editor;
-import static com.example.micha.musicplayer.MainActivity.gson;
-import static com.example.micha.musicplayer.MainActivity.loop;
-import static com.example.micha.musicplayer.MainActivity.nowPlayingPosition;
-import static com.example.micha.musicplayer.MainActivity.original;
-import static com.example.micha.musicplayer.MainActivity.playlistPosition;
-import static com.example.micha.musicplayer.MainActivity.mp;
-import static com.example.micha.musicplayer.MainActivity.nowPlaying;
-import static com.example.micha.musicplayer.MainActivity.playing;
-import static com.example.micha.musicplayer.MainActivity.playlists;
-import static com.example.micha.musicplayer.MainActivity.shuffle;
+import static com.michaelqi.musicplayer.MainActivity.LOOP_ALL;
+import static com.michaelqi.musicplayer.MainActivity.LOOP_CURRENT;
+import static com.michaelqi.musicplayer.MainActivity.NO_LOOP;
+import static com.michaelqi.musicplayer.MainActivity.addSong;
+import static com.michaelqi.musicplayer.MainActivity.editor;
+import static com.michaelqi.musicplayer.MainActivity.gson;
+import static com.michaelqi.musicplayer.MainActivity.loop;
+import static com.michaelqi.musicplayer.MainActivity.nowPlayingPosition;
+import static com.michaelqi.musicplayer.MainActivity.original;
+import static com.michaelqi.musicplayer.MainActivity.playlistPosition;
+import static com.michaelqi.musicplayer.MainActivity.mp;
+import static com.michaelqi.musicplayer.MainActivity.nowPlaying;
+import static com.michaelqi.musicplayer.MainActivity.playing;
+import static com.michaelqi.musicplayer.MainActivity.playlists;
+import static com.michaelqi.musicplayer.MainActivity.shuffle;
 
 public class OnClickListener {
     static class AddPlaylist implements Dialog.OnClickListener {

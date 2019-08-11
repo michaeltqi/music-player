@@ -1,4 +1,4 @@
-package com.example.micha.musicplayer;
+package com.michaelqi.musicplayer;
 
 import androidx.annotation.NonNull;
 import androidx.room.Entity;

@@ -1,4 +1,4 @@
-package com.example.micha.musicplayer;
+package com.michaelqi.musicplayer;
 
 import android.app.Activity;
 import android.net.Uri;
@@ -7,10 +7,10 @@ import androidx.viewpager.widget.ViewPager;
 
 import java.io.File;
 
-import static com.example.micha.musicplayer.MainActivity.nowPlaying;
-import static com.example.micha.musicplayer.MainActivity.nowPlayingPosition;
-import static com.example.micha.musicplayer.MainActivity.playlistPosition;
-import static com.example.micha.musicplayer.MainActivity.playing;
+import static com.michaelqi.musicplayer.MainActivity.nowPlaying;
+import static com.michaelqi.musicplayer.MainActivity.nowPlayingPosition;
+import static com.michaelqi.musicplayer.MainActivity.playlistPosition;
+import static com.michaelqi.musicplayer.MainActivity.playing;
 
 public class AlbumPageListener extends ViewPager.SimpleOnPageChangeListener {
     Activity activity;

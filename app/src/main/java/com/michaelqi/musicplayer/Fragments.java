@@ -1,4 +1,4 @@
-package com.example.micha.musicplayer;
+package com.michaelqi.musicplayer;
 
 import android.app.Activity;
 import android.graphics.BitmapFactory;
@@ -16,16 +16,18 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
+import com.example.micha.musicplayer.R;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static com.example.micha.musicplayer.MainActivity.albums;
-import static com.example.micha.musicplayer.MainActivity.genres;
-import static com.example.micha.musicplayer.MainActivity.mmr;
-import static com.example.micha.musicplayer.MainActivity.nowPlayingPosition;
-import static com.example.micha.musicplayer.MainActivity.playlists;
-import static com.example.micha.musicplayer.MainActivity.songs;
+import static com.michaelqi.musicplayer.MainActivity.albums;
+import static com.michaelqi.musicplayer.MainActivity.genres;
+import static com.michaelqi.musicplayer.MainActivity.mmr;
+import static com.michaelqi.musicplayer.MainActivity.nowPlayingPosition;
+import static com.michaelqi.musicplayer.MainActivity.playlists;
+import static com.michaelqi.musicplayer.MainActivity.songs;
 
 public class Fragments {
 

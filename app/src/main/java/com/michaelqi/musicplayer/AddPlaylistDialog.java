@@ -1,4 +1,4 @@
-package com.example.micha.musicplayer;
+package com.michaelqi.musicplayer;
 
 import android.app.Dialog;
 import android.os.Bundle;
@@ -6,10 +6,12 @@ import android.os.Bundle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 
+import com.example.micha.musicplayer.R;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.example.micha.musicplayer.MainActivity.playlists;
+import static com.michaelqi.musicplayer.MainActivity.playlists;
 
 public class AddPlaylistDialog extends DialogFragment {
 

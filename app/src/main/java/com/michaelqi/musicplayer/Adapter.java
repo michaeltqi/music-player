@@ -1,4 +1,4 @@
-package com.example.micha.musicplayer;
+package com.michaelqi.musicplayer;
 
 import android.app.Activity;
 import android.content.Context;
@@ -8,7 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -18,16 +17,16 @@ import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.PagerAdapter;
 
+import com.example.micha.musicplayer.R;
+
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
-import static com.example.micha.musicplayer.MainActivity.albumViews;
-import static com.example.micha.musicplayer.MainActivity.mmr;
-import static com.example.micha.musicplayer.MainActivity.nowPlaying;
-import static com.example.micha.musicplayer.MainActivity.nowPlayingPosition;
-import static com.example.micha.musicplayer.MainActivity.playing;
-import static com.example.micha.musicplayer.MainActivity.songs;
+import static com.michaelqi.musicplayer.MainActivity.albumViews;
+import static com.michaelqi.musicplayer.MainActivity.mmr;
+import static com.michaelqi.musicplayer.MainActivity.nowPlaying;
+import static com.michaelqi.musicplayer.MainActivity.nowPlayingPosition;
+import static com.michaelqi.musicplayer.MainActivity.playing;
 
 public class Adapter {
     static class AddPlaylist extends ArrayAdapter<String> {
