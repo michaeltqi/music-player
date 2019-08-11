@@ -360,6 +360,25 @@ public class OnClickListener {
         }
     }
 
+    static class PlaySong2 implements View.OnClickListener {
+        Activity activity;
+        List<Music> songs;
+        int position;
+        boolean multiple;
+
+        PlaySong2(Activity activity, List<Music> songs, int position, boolean multiple) {
+            this.activity = activity;
+            this.songs = songs;
+            this.position = position;
+            this.multiple = multiple;
+        }
+
+        @Override
+        public void onClick(View view) {
+            new Thread(new AppRunnable.PlaySong2(activity, songs, position, multiple)).start();
+        }
+    }
+
     static class PlaySongList implements View.OnClickListener {
         Activity activity;
         List<Music> songs;

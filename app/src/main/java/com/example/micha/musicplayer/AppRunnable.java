@@ -28,6 +28,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 
 import static android.view.View.VISIBLE;
 import static com.example.micha.musicplayer.MainActivity.LOOP_ALL;
@@ -229,7 +230,7 @@ public class AppRunnable {
                 mp.start();
             }
             if (multiple) {
-                original.set(nowPlayingPosition, ((Adapter.Song) ((HeaderViewListAdapter) parent.getAdapter()).getWrappedAdapter()).music);
+                original.set(nowPlayingPosition, ((Adapter.OldSong) ((HeaderViewListAdapter) parent.getAdapter()).getWrappedAdapter()).music);
                 nowPlaying.set(nowPlayingPosition, new ArrayList<>(original.get(nowPlayingPosition)));
                 if (shuffle) {
                     nowPlaying.get(nowPlayingPosition).remove((int) id);
@@ -245,6 +246,65 @@ public class AppRunnable {
                 playlistPosition.set(nowPlayingPosition, 0);
             }
 
+            mmr.setDataSource(playing.getPath());
+            activity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    new SetupSong(activity, true).run();
+                    ((SlidingUpPanelLayout) activity.findViewById(R.id.SlidingUpPanelLayout)).setTouchEnabled(true);
+                    ((SlidingUpPanelLayout) activity.findViewById(R.id.SlidingUpPanelLayout)).setPanelState(SlidingUpPanelLayout.PanelState.EXPANDED);
+                    new AppRunnable.SetupBottom(activity, true).run();
+                }
+            });
+        }
+    }
+
+    static class PlaySong2 implements Runnable {
+        Activity activity;
+        List<Music> songs;
+        int position;
+        boolean multiple;
+
+        PlaySong2(Activity activity, List<Music> songs, int position, boolean multiple) {
+            this.activity = activity;
+            this.songs = songs;
+            this.position = position;
+            this.multiple = multiple;
+        }
+
+        @Override
+        public void run() {
+            Music song = songs.get(position);
+            if (playing == null || !playing.equals(song)) {
+                playing = song;
+                if (mp != null && mp.isPlaying()) {
+                    mp.stop();
+                }
+                mp = mp.create(activity, Uri.fromFile(new File(playing.getPath())));
+                mp.start();
+                mp.setOnCompletionListener(new Utility.SongCompletionListener(activity));
+            } else {
+                mp.start();
+            }
+            original.set(nowPlayingPosition, songs);
+            nowPlaying.set(nowPlayingPosition, new ArrayList<>(songs));
+
+            if (multiple) {
+                original.set(nowPlayingPosition, songs);
+                nowPlaying.set(nowPlayingPosition, new ArrayList<>(original.get(nowPlayingPosition)));
+                if (shuffle) {
+                    nowPlaying.get(nowPlayingPosition).remove(position);
+                    Collections.shuffle(nowPlaying.get(nowPlayingPosition));
+                    nowPlaying.get(nowPlayingPosition).add(0, playing);
+                    playlistPosition.set(nowPlayingPosition, 0);
+                } else {
+                    playlistPosition.set(nowPlayingPosition, position);
+                }
+            } else {
+                original.set(nowPlayingPosition, Collections.singletonList(playing));
+                nowPlaying.set(nowPlayingPosition, new ArrayList<>(original.get(nowPlayingPosition)));
+                playlistPosition.set(nowPlayingPosition, 0);
+            }
             mmr.setDataSource(playing.getPath());
             activity.runOnUiThread(new Runnable() {
                 @Override
@@ -520,32 +580,16 @@ public class AppRunnable {
                 }
             });
             seekBar.setMax(totalTime);
-            int h = totalTime / 3600;
-            int m = (totalTime - h * 3600) / 60;
-            int s = totalTime - (h * 3600 + m * 60);
-            String total;
-            if (h == 0) {
-                total = String.format("%d:%02d", m, s);
-            } else {
-                total = String.format("%d:%d:%02d", h, m, s);
-            }
-            ((TextView) activity.findViewById(R.id.TotalTime)).setText(total);
+            String duration = Utility.formatDuration(totalTime);
+            ((TextView) activity.findViewById(R.id.TotalTime)).setText(duration);
             handler.post(new Runnable() {
                 @Override
                 public void run() {
                     if (mp != null) {
-                        int d = mp.getCurrentPosition() / 1000;
-                        seekBar.setProgress(d);
-                        int h = d / 3600;
-                        int m = (d - h * 3600) / 60;
-                        int s = d - (h * 3600 + m * 60);
-                        String current;
-                        if (h == 0) {
-                            current = String.format("%d:%02d", m, s);
-                        } else {
-                            current = String.format("%d:%d:%02d", h, m, s);
-                        }
-                        ((TextView) activity.findViewById(R.id.CurrentTime)).setText(current);
+                        int currentDuration = mp.getCurrentPosition() / 1000;
+                        seekBar.setProgress(currentDuration);
+                        String currentTime = Utility.formatDuration(currentDuration);
+                        ((TextView) activity.findViewById(R.id.CurrentTime)).setText(currentTime);
                     }
                     handler.postDelayed(this, 1000);
                 }

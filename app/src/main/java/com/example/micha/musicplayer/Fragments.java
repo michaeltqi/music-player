@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -33,11 +34,7 @@ public class Fragments {
             Album fragment = new Album();
             List<Music> songs = albums.get(album);
             fragment.layout = activity.getLayoutInflater().inflate(R.layout.fragment_album, container, false);
-            ListView albumList = fragment.layout.findViewById(R.id.AlbumSongs);
-            albumList.setAdapter(new Adapter.Song(activity, R.layout.row_song, songs, ((AppCompatActivity) activity).getSupportFragmentManager()));
-            albumList.setOnItemClickListener(new OnClickListener.PlaySong(activity, true));
-
-            View header = activity.getLayoutInflater().inflate(R.layout.header_album, null);
+            View header = activity.getLayoutInflater().inflate(R.layout.header_album, container, false);
             mmr.setDataSource(songs.get(0).getPath());
             byte[] image = mmr.getEmbeddedPicture();
             if (image == null) {
@@ -52,7 +49,8 @@ public class Fragments {
             } else {
                 ((TextView) header.findViewById(R.id.AlbumCount)).setText(songs.size() + " songs");
             }
-            albumList.addHeaderView(header, "Album Header", false);
+            RecyclerView recyclerView = fragment.layout.findViewById(R.id.AlbumSongs);
+            recyclerView.setAdapter(new Adapter.Song(activity, ((AppCompatActivity) activity).getSupportFragmentManager(), songs, true, header));
 
             fragment.layout.findViewById(R.id.ShuffleSongs).setOnClickListener(new OnClickListener.PlaySongList(activity, songs, true, false));
             fragment.layout.findViewById(R.id.PlaySongs).setOnClickListener(new OnClickListener.PlaySongList(activity, songs, false, false));
@@ -84,17 +82,14 @@ public class Fragments {
             Genre fragment = new Genre();
             List<Music> songs = genres.get(genre);
             fragment.layout = activity.getLayoutInflater().inflate(R.layout.fragment_genre, container, false);
-            ListView genreList = fragment.layout.findViewById(R.id.GenreList);
-            genreList.setAdapter(new Adapter.Song(activity, R.layout.row_song, songs, ((AppCompatActivity) activity).getSupportFragmentManager()));
-            genreList.setOnItemClickListener(new OnClickListener.PlaySong(activity, true));
-
-            View header = activity.getLayoutInflater().inflate(R.layout.header_genre, null);
+            View header = activity.getLayoutInflater().inflate(R.layout.header_genre, container, false);
             if (songs.size() == 1) {
                 ((TextView) header.findViewById(R.id.GenreCount)).setText("1 song");
             } else {
                 ((TextView) header.findViewById(R.id.GenreCount)).setText(songs.size() + " songs");
             }
-            genreList.addHeaderView(header, "Genre Header", false);
+            RecyclerView recyclerView = fragment.layout.findViewById(R.id.GenreSongs);
+            recyclerView.setAdapter(new Adapter.Song(activity, ((AppCompatActivity) activity).getSupportFragmentManager(), songs, true, header));
             fragment.layout.findViewById(R.id.ShuffleSongs).setOnClickListener(new OnClickListener.PlaySongList(activity, songs, true, false));
             fragment.layout.findViewById(R.id.PlaySongs).setOnClickListener(new OnClickListener.PlaySongList(activity, songs, false, false));
             return fragment;
@@ -125,19 +120,14 @@ public class Fragments {
             Playlist fragment = new Playlist();
             List<Music> songs = playlists.get(playlist);
             fragment.layout = activity.getLayoutInflater().inflate(R.layout.fragment_playlist, container, false);
-            ListView playlistList = fragment.layout.findViewById(R.id.PlaylistList);
-
-            playlistList.setAdapter(new Adapter.Song(activity, R.layout.row_song, songs, ((AppCompatActivity) activity).getSupportFragmentManager()));
-            playlistList.setOnItemClickListener(new OnClickListener.PlaySong(activity, true));
-
             View header = activity.getLayoutInflater().inflate(R.layout.header_playlist, null);
             if (songs.size() == 1) {
                 ((TextView) header.findViewById(R.id.PlaylistCount)).setText("1 song");
             } else {
                 ((TextView) header.findViewById(R.id.PlaylistCount)).setText(songs.size() + " songs");
             }
-            playlistList.addHeaderView(header, "Playlist Header", false);
-
+            RecyclerView recyclerView = fragment.layout.findViewById(R.id.PlaylistSongs);
+            recyclerView.setAdapter(new Adapter.Song(activity, ((AppCompatActivity) activity).getSupportFragmentManager(), songs, true, header));
             fragment.layout.findViewById(R.id.ShuffleSongs).setOnClickListener(new OnClickListener.PlaySongList(activity, songs, true, false));
             fragment.layout.findViewById(R.id.PlaySongs).setOnClickListener(new OnClickListener.PlaySongList(activity, songs, false, false));
             return fragment;
@@ -180,8 +170,7 @@ public class Fragments {
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             View layout = inflater.inflate(R.layout.page_song, container, false);
-            ((ListView) layout.findViewById(R.id.SongList)).setAdapter(new Adapter.Song(getActivity(), R.layout.row_song, songs, getFragmentManager()));
-            ((ListView) layout.findViewById(R.id.SongList)).setOnItemClickListener(new OnClickListener.PlaySong(getActivity(), false));
+            ((RecyclerView) layout.findViewById(R.id.SongList)).setAdapter(new Adapter.Song(getActivity(), getFragmentManager(), songs, false, null));
             return layout;
         }
     }

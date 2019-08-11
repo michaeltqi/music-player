@@ -47,6 +47,16 @@ import static com.example.micha.musicplayer.MainActivity.songs;
 import static com.example.micha.musicplayer.MainActivity.timestamp;
 
 public class Utility {
+    public static String formatDuration(long duration) {
+        long hour = duration / 3600;
+        long minute = (duration - hour * 3600) / 60;
+        long second = duration - (hour * 3600 + minute * 60);
+        if (hour == 0) {
+            return String.format("%d:%02d", minute, second);
+        }
+        return String.format("%d:%d:%02d", hour, minute, second);
+    }
+
     public static void initializeValues(Activity activity) {
 
         AppDataBase database = Room.databaseBuilder(activity, AppDataBase.class, "Music")
@@ -298,23 +308,6 @@ public class Utility {
             activity.findViewById(R.id.BottomArtist).setVisibility(View.INVISIBLE);
             activity.findViewById(R.id.PlayPauseB).setVisibility(View.INVISIBLE);
             activity.findViewById(R.id.ProgressBar).setVisibility(View.INVISIBLE);
-//            playing = null;
-//            nowPlaying = new ArrayList<>();
-//            nowPlaying.add(new ArrayList<Music>());
-//            original = new ArrayList<>();
-//            original.add(new ArrayList<Music>());
-//            playlistPosition = new ArrayList<>();
-//            playlistPosition.add(0);
-//            timestamp = new ArrayList<>();
-//            timestamp.add(0);
-        } else {
-//            AppRunnable.BottomBar bottomBarRunnable = new AppRunnable.BottomBar(activity, false, false);
-//            new Thread(bottomBarRunnable).start();
         }
-//        try {
-//            ((SlidingUpPanelLayout) activity.findViewById(R.id.SlidingUpPanelLayout)).removePanelSlideListener(panelSlideListener);
-//        } catch (Exception e) { }
-//        ((SlidingUpPanelLayout) activity.findViewById(R.id.SlidingUpPanelLayout)).addPanelSlideListener(panelSlideListener);
-        noisyReceiver.setActivity(activity);
     }
 }

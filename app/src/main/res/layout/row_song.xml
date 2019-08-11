@@ -2,12 +2,12 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="65dp" >
 
     <TableLayout
         android:id="@+id/SongTable"
         android:layout_width="match_parent"
-        android:layout_height="65dp"
+        android:layout_height="match_parent"
         style="@style/MainSelectableItemBackground">
 
         <TableRow
@@ -23,8 +23,9 @@
                 android:id="@+id/Title"
                 android:layout_width="match_parent"
                 android:layout_height="30dp"
+                android:layout_weight="1"
                 android:textColor="@color/textPrimaryColor"
-                android:textSize="18sp"/>
+                android:textSize="18sp" />
         </TableRow>
 
         <TableRow
@@ -38,6 +39,7 @@
                 android:id="@+id/Artist"
                 android:layout_width="match_parent"
                 android:layout_height="35dp"
+                android:layout_weight="1"
                 android:textColor="@color/textSecondaryColor"
                 android:textSize="14sp"/>
         </TableRow>
@@ -48,7 +50,7 @@
         android:id="@+id/SongDropdown"
         style="@style/SecondarySelectableItemBackground"
         android:layout_width="36dp"
-        android:layout_height="65dp"
+        android:layout_height="match_parent"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
         android:contentDescription="@string/dots"

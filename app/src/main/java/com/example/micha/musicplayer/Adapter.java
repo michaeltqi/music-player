@@ -14,9 +14,11 @@ import android.widget.TextView;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.PagerAdapter;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static com.example.micha.musicplayer.MainActivity.albumViews;
@@ -24,6 +26,7 @@ import static com.example.micha.musicplayer.MainActivity.mmr;
 import static com.example.micha.musicplayer.MainActivity.nowPlaying;
 import static com.example.micha.musicplayer.MainActivity.nowPlayingPosition;
 import static com.example.micha.musicplayer.MainActivity.playing;
+import static com.example.micha.musicplayer.MainActivity.songs;
 
 public class Adapter {
     static class AddPlaylist extends ArrayAdapter<String> {
@@ -198,7 +201,7 @@ public class Adapter {
         public Object instantiateItem(ViewGroup container, int position) {
             View view = LayoutInflater.from(activity).inflate(R.layout.now_playing, container, false);
             ((ListView) view.findViewById(R.id.NowPlaying)).setAdapter
-                    (new Adapter.Song(activity, R.layout.row_song, nowPlaying.get(position), fragmentManager));
+                    (new Adapter.OldSong(activity, R.layout.row_song, nowPlaying.get(position), fragmentManager));
             ((ListView) view.findViewById(R.id.NowPlaying)).setOnItemClickListener(new OnClickListener.PlaySong(activity, true));
             View header = activity.getLayoutInflater().inflate(R.layout.header_playlist, null);
             if (nowPlaying.get(position).size() == 1) {
@@ -295,13 +298,13 @@ public class Adapter {
         }
     }
 
-    static class Song extends ArrayAdapter<Music> {
+    static class OldSong extends ArrayAdapter<Music> {
         Context context;
         int resource;
         List<Music> music;
         FragmentManager fragmentManager;
 
-        public Song(Context context, int resource, List<Music> music, FragmentManager fragmentManager) {
+        public OldSong(Context context, int resource, List<Music> music, FragmentManager fragmentManager) {
             super(context, resource, music);
             this.context = context;
             this.resource = resource;
@@ -339,6 +342,89 @@ public class Adapter {
                     setOnClickListener(new OnClickListener.SongMenu(getContext(), fragmentManager, song));
 
             return view;
+        }
+    }
+
+    static class Song extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+        Activity activity;
+        FragmentManager fragmentManager;
+        List<Music> songs;
+        boolean multiple;
+        View header;
+        static final int HEADER = 0;
+        static final int SONG = 1;
+
+        Song(Activity activity, FragmentManager fragmentManager, List<Music> songs, boolean multiple, View header) {
+            this.activity = activity;
+            this.fragmentManager = fragmentManager;
+            this.songs = songs;
+            this.multiple = multiple;
+            this.header = header;
+        }
+
+        public static class HeaderViewHolder extends RecyclerView.ViewHolder {
+            View view;
+            public HeaderViewHolder(View view) {
+                super(view);
+                this.view = view;
+            }
+        }
+
+        public static class SongViewHolder extends RecyclerView.ViewHolder {
+            View view;
+            public SongViewHolder(View view) {
+                super(view);
+                this.view = view;
+            }
+        }
+
+        @Override
+        public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            if (viewType == HEADER) {
+                return new HeaderViewHolder(header);
+            }
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_song, parent, false);
+            SongViewHolder songViewHolder = new SongViewHolder(view);
+            return songViewHolder;
+        }
+
+        @Override
+        public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
+            if (viewHolder instanceof SongViewHolder) {
+                View songView = ((SongViewHolder) viewHolder).view;
+                Music song = songs.get(position - (header == null ? 0 : 1));
+                String title = song.getTitle() == null ? song.getPath() : song.getTitle();
+                String artist = song.getArtist() == null ? "" : song.getArtist();
+                String duration = Utility.formatDuration(song.getDuration() == null ? 0 : Long.parseLong(song.getDuration()) / 1000);
+
+                ((TextView) songView.findViewById(R.id.Title)).setText(title);
+                ((TextView) songView.findViewById(R.id.Artist)).setText(artist + " (" + duration + ")");
+                if (song.equals(playing)) {
+                    ((TextView) songView.findViewById(R.id.Title)).setTextColor(activity.getResources().getColor(R.color.colorPrimary));
+                    ((TextView) songView.findViewById(R.id.Artist)).setTextColor(activity.getResources().getColor(R.color.colorPrimary));
+                }
+
+                songView.setOnClickListener(new OnClickListener.PlaySong2(activity, songs, position - (header == null ? 0 : 1), multiple));
+                songView.findViewById(R.id.SongDropdown).setOnClickListener(new OnClickListener.SongMenu(activity, fragmentManager, song));
+            }
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return position;
+        }
+
+        @Override
+        public int getItemViewType(int position) {
+            if (header != null && position == 0) {
+                return HEADER;
+            }
+            return SONG;
+        }
+
+        @Override
+        public int getItemCount() {
+            return songs.size() + (header == null ? 0 : 1);
         }
     }
 }
