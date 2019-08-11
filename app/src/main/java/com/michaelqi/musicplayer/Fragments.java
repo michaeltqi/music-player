@@ -16,8 +16,6 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
-import com.example.micha.musicplayer.R;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -35,6 +33,8 @@ public class Fragments {
         View layout;
 
         public static Album newInstance(Activity activity, ViewGroup container, String album) {
+            Album fragment = new Album();
+            List<Music> songs = albums.get(album);
             View header = activity.getLayoutInflater().inflate(R.layout.header_album, container, false);
             mmr.setDataSource(songs.get(0).getPath());
             byte[] image = mmr.getEmbeddedPicture();
@@ -50,9 +50,6 @@ public class Fragments {
             } else {
                 ((TextView) header.findViewById(R.id.AlbumCount)).setText(songs.size() + " songs");
             }
-
-            Album fragment = new Album();
-            List<Music> songs = albums.get(album);
             fragment.layout = activity.getLayoutInflater().inflate(R.layout.fragment_album, container, false);
             RecyclerView recyclerView = fragment.layout.findViewById(R.id.AlbumSongs);
             recyclerView.setAdapter(new Adapter.Song(activity, ((AppCompatActivity) activity).getSupportFragmentManager(), songs, true, header));
@@ -84,6 +81,8 @@ public class Fragments {
         View layout;
 
         public static Genre newInstance(Activity activity, ViewGroup container, String genre) {
+            Genre fragment = new Genre();
+            List<Music> songs = genres.get(genre);
             View header = activity.getLayoutInflater().inflate(R.layout.header_genre, container, false);
             if (songs.size() == 1) {
                 ((TextView) header.findViewById(R.id.GenreCount)).setText("1 song");
@@ -91,8 +90,6 @@ public class Fragments {
                 ((TextView) header.findViewById(R.id.GenreCount)).setText(songs.size() + " songs");
             }
 
-            Genre fragment = new Genre();
-            List<Music> songs = genres.get(genre);
             fragment.layout = activity.getLayoutInflater().inflate(R.layout.fragment_genre, container, false);
             RecyclerView recyclerView = fragment.layout.findViewById(R.id.GenreSongs);
             recyclerView.setAdapter(new Adapter.Song(activity, ((AppCompatActivity) activity).getSupportFragmentManager(), songs, true, header));
@@ -146,6 +143,8 @@ public class Fragments {
         View layout;
 
         public static Playlist newInstance(Activity activity, ViewGroup container, String playlist) {
+            Playlist fragment = new Playlist();
+            List<Music> songs = playlists.get(playlist);
             View header = activity.getLayoutInflater().inflate(R.layout.header_playlist, container, false);
             if (songs.size() == 1) {
                 ((TextView) header.findViewById(R.id.PlaylistCount)).setText("1 song");
@@ -153,8 +152,6 @@ public class Fragments {
                 ((TextView) header.findViewById(R.id.PlaylistCount)).setText(songs.size() + " songs");
             }
 
-            Playlist fragment = new Playlist();
-            List<Music> songs = playlists.get(playlist);
             fragment.layout = activity.getLayoutInflater().inflate(R.layout.fragment_playlist, container, false);
             RecyclerView recyclerView = fragment.layout.findViewById(R.id.PlaylistSongs);
             recyclerView.setAdapter(new Adapter.Song(activity, ((AppCompatActivity) activity).getSupportFragmentManager(), songs, true, header));

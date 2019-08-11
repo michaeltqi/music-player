@@ -15,7 +15,6 @@ import android.widget.ImageView;
 import androidx.room.Room;
 import androidx.viewpager.widget.ViewPager;
 
-import com.example.micha.musicplayer.R;
 import com.google.gson.reflect.TypeToken;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 

@@ -17,8 +17,6 @@ import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.PagerAdapter;
 
-import com.example.micha.musicplayer.R;
-
 import java.util.ArrayList;
 import java.util.List;
 

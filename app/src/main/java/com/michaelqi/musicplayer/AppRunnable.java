@@ -20,7 +20,6 @@ import androidx.room.Room;
 import androidx.viewpager.widget.ViewPager;
 
 import com.bumptech.glide.Glide;
-import com.example.micha.musicplayer.R;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
 import java.io.File;

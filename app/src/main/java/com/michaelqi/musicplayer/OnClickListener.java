@@ -16,7 +16,6 @@ import androidx.appcompat.widget.PopupMenu;
 import androidx.fragment.app.FragmentManager;
 import androidx.viewpager.widget.ViewPager;
 
-import com.example.micha.musicplayer.R;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
 import java.io.File;
