@@ -1,6 +1,8 @@
 package com.michaelqi.musicplayer;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.PorterDuff;
@@ -33,7 +35,6 @@ import static com.michaelqi.musicplayer.MainActivity.LOOP_ALL;
 import static com.michaelqi.musicplayer.MainActivity.LOOP_CURRENT;
 import static com.michaelqi.musicplayer.MainActivity.NO_LOOP;
 import static com.michaelqi.musicplayer.MainActivity.albums;
-import static com.michaelqi.musicplayer.MainActivity.editor;
 import static com.michaelqi.musicplayer.MainActivity.genres;
 import static com.michaelqi.musicplayer.MainActivity.gson;
 import static com.michaelqi.musicplayer.MainActivity.handler;
@@ -43,7 +44,6 @@ import static com.michaelqi.musicplayer.MainActivity.mp;
 import static com.michaelqi.musicplayer.MainActivity.nowPlaying;
 import static com.michaelqi.musicplayer.MainActivity.nowPlayingPosition;
 import static com.michaelqi.musicplayer.MainActivity.original;
-import static com.michaelqi.musicplayer.MainActivity.pagerAdapter;
 import static com.michaelqi.musicplayer.MainActivity.path;
 import static com.michaelqi.musicplayer.MainActivity.playing;
 import static com.michaelqi.musicplayer.MainActivity.playlistPosition;
@@ -161,12 +161,13 @@ public class AppRunnable {
             } else {
                 playlists.put(newPlaylist, new ArrayList<Music>());
                 String json = gson.toJson(playlists, playlists.getClass());
+                SharedPreferences.Editor editor = activity.getPreferences(Context.MODE_PRIVATE).edit();
                 editor.putString("Playlists", json);
-                editor.commit();
+                editor.apply();
                 activity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        pagerAdapter.notifyDataSetChanged();
+                        ((ViewPager) activity.findViewById(R.id.ViewPager)).getAdapter().notifyDataSetChanged();
                     }
                 });
             }
@@ -328,6 +329,7 @@ public class AppRunnable {
             }
             database.close();
 
+            SharedPreferences.Editor editor = activity.getPreferences(Context.MODE_PRIVATE).edit();
             albums = albumRefresh;
             String json = gson.toJson(albums);
             editor.putString("Albums", json);
@@ -341,7 +343,7 @@ public class AppRunnable {
             activity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    pagerAdapter.notifyDataSetChanged();
+                    ((ViewPager) activity.findViewById(R.id.ViewPager)).getAdapter().notifyDataSetChanged();
                     Toast.makeText(activity, "Done", Toast.LENGTH_SHORT).show();
                 }
             });

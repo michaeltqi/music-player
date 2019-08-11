@@ -12,6 +12,11 @@ import java.util.List;
 import static com.michaelqi.musicplayer.MainActivity.playlists;
 
 public class AddPlaylistDialog extends DialogFragment {
+    Music song;
+
+    AddPlaylistDialog(Music song) {
+        this.song = song;
+    }
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -20,7 +25,7 @@ public class AddPlaylistDialog extends DialogFragment {
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
             Adapter.AddPlaylist addPlaylistAdapter =
                     new Adapter.AddPlaylist(getActivity(), R.layout.row_add_playlist, plays);
-            builder.setAdapter(addPlaylistAdapter, new OnClickListener.AddPlaylist(getActivity(), addPlaylistAdapter));
+            builder.setAdapter(addPlaylistAdapter, new OnClickListener.AddPlaylist(getActivity(), addPlaylistAdapter, song));
             return builder.create();
         }
         return null;

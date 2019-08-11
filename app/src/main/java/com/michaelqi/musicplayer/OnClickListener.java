@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.view.MenuItem;
 import android.view.View;
@@ -27,8 +28,6 @@ import static android.view.View.VISIBLE;
 import static com.michaelqi.musicplayer.MainActivity.LOOP_ALL;
 import static com.michaelqi.musicplayer.MainActivity.LOOP_CURRENT;
 import static com.michaelqi.musicplayer.MainActivity.NO_LOOP;
-import static com.michaelqi.musicplayer.MainActivity.addSong;
-import static com.michaelqi.musicplayer.MainActivity.editor;
 import static com.michaelqi.musicplayer.MainActivity.gson;
 import static com.michaelqi.musicplayer.MainActivity.loop;
 import static com.michaelqi.musicplayer.MainActivity.nowPlayingPosition;
@@ -44,18 +43,21 @@ public class OnClickListener {
     static class AddPlaylist implements Dialog.OnClickListener {
         Activity activity;
         Adapter.AddPlaylist addPlaylistAdapter;
+        Music song;
 
-        AddPlaylist(Activity activity, Adapter.AddPlaylist addPlaylistAdapter) {
+        AddPlaylist(Activity activity, Adapter.AddPlaylist addPlaylistAdapter, Music song) {
             this.activity = activity;
             this.addPlaylistAdapter = addPlaylistAdapter;
+            this.song = song;
         }
 
         @Override
         public void onClick(DialogInterface dialog, int which) {
             String playlist = addPlaylistAdapter.getItem(which);
-            if (!playlists.get(playlist).contains(addSong)) {
-                playlists.get(playlist).add(addSong);
+            if (!playlists.get(playlist).contains(song)) {
+                playlists.get(playlist).add(song);
                 String json = gson.toJson(playlists);
+                SharedPreferences.Editor editor = activity.getPreferences(Context.MODE_PRIVATE).edit();
                 editor.putString("Playlists", json);
                 editor.apply();
                 Toast.makeText(activity, "Done", Toast.LENGTH_SHORT).show();
@@ -466,7 +468,7 @@ public class OnClickListener {
                     switch (menuItem.getItemId()) {
                         case R.id.add:
                             if (playlists.keySet().size() > 0) {
-                                new AddPlaylistDialog().show(fragmentManager, "AddPlaylist");
+                                new AddPlaylistDialog(song).show(fragmentManager, "AddPlaylist");
                             } else {
                                 Toast.makeText(context, "Fix", Toast.LENGTH_SHORT).show();
                             }

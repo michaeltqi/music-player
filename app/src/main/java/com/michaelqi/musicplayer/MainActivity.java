@@ -1,7 +1,6 @@
 package com.michaelqi.musicplayer;
 
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.media.AudioManager;
 import android.media.MediaMetadataRetriever;
 import android.media.MediaPlayer;
@@ -13,7 +12,6 @@ import android.view.View;
 import android.widget.ImageView;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.tabs.TabLayout;
@@ -25,15 +23,13 @@ import java.util.HashMap;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
+    static final int NO_LOOP = 0;
+    static final int LOOP_ALL = 1;
+    static final int LOOP_CURRENT = 2;
 
     static String path = Environment.getExternalStorageDirectory().toString() + "/Music";
 
     static Handler handler;
-    static ViewPager viewPager;
-    static FragmentPagerAdapter pagerAdapter;
-
-    static SharedPreferences sharedPreferences;
-    static SharedPreferences.Editor editor;
     static Gson gson = new Gson();
 
     static List<Music> songs;
@@ -53,11 +49,6 @@ public class MainActivity extends AppCompatActivity {
     static ArrayList<Integer> timestamp = new ArrayList<>();
     static boolean shuffle;
     static int loop;
-    static final int NO_LOOP = 0;
-    static final int LOOP_ALL = 1;
-    static final int LOOP_CURRENT = 2;
-
-    static Music addSong;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,12 +56,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         Utility.initializeValues(this);
-        AppRunnable.OnStart onStart = new AppRunnable.OnStart(MainActivity.this);
+        AppRunnable.OnStart onStart = new AppRunnable.OnStart(this);
         new Thread(onStart).start();
-        viewPager = findViewById(R.id.SongViewPager);
-        pagerAdapter = new Adapter.MusicPager(getSupportFragmentManager());
-        viewPager.setAdapter(pagerAdapter);
-        ((TabLayout) findViewById(R.id.TabLayout)).setupWithViewPager(viewPager);
+        ((ViewPager) findViewById(R.id.ViewPager)).setAdapter(new Adapter.MusicPager(getSupportFragmentManager()));
+        ((TabLayout) findViewById(R.id.TabLayout)).setupWithViewPager((ViewPager) findViewById(R.id.ViewPager));
         ((SlidingUpPanelLayout) findViewById(R.id.SlidingUpPanelLayout)).addPanelSlideListener(new Utility.PanelListener(this));
         switch(loop) {
             case NO_LOOP:
@@ -116,13 +105,13 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onResume() {
-        pagerAdapter.notifyDataSetChanged();
+        ((ViewPager) findViewById(R.id.ViewPager)).getAdapter().notifyDataSetChanged();
         super.onResume();
     }
 
     @Override
     public void onStop() {
-        Utility.stop();
+        Utility.stop(this);
         super.onStop();
     }
 

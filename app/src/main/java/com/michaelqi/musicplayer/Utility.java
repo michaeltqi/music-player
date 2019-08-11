@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -29,7 +30,6 @@ import static com.michaelqi.musicplayer.MainActivity.LOOP_ALL;
 import static com.michaelqi.musicplayer.MainActivity.LOOP_CURRENT;
 import static com.michaelqi.musicplayer.MainActivity.NO_LOOP;
 import static com.michaelqi.musicplayer.MainActivity.albums;
-import static com.michaelqi.musicplayer.MainActivity.editor;
 import static com.michaelqi.musicplayer.MainActivity.genres;
 import static com.michaelqi.musicplayer.MainActivity.gson;
 import static com.michaelqi.musicplayer.MainActivity.handler;
@@ -39,11 +39,9 @@ import static com.michaelqi.musicplayer.MainActivity.mp;
 import static com.michaelqi.musicplayer.MainActivity.nowPlaying;
 import static com.michaelqi.musicplayer.MainActivity.nowPlayingPosition;
 import static com.michaelqi.musicplayer.MainActivity.original;
-import static com.michaelqi.musicplayer.MainActivity.pagerAdapter;
 import static com.michaelqi.musicplayer.MainActivity.playing;
 import static com.michaelqi.musicplayer.MainActivity.playlistPosition;
 import static com.michaelqi.musicplayer.MainActivity.playlists;
-import static com.michaelqi.musicplayer.MainActivity.sharedPreferences;
 import static com.michaelqi.musicplayer.MainActivity.shuffle;
 import static com.michaelqi.musicplayer.MainActivity.songs;
 import static com.michaelqi.musicplayer.MainActivity.timestamp;
@@ -82,8 +80,7 @@ public class Utility {
         database.close();
 
         handler = new Handler(Looper.getMainLooper());
-        sharedPreferences = activity.getPreferences(Context.MODE_PRIVATE);
-        editor = sharedPreferences.edit();
+        SharedPreferences sharedPreferences = activity.getPreferences(Context.MODE_PRIVATE);
         Type type = new TypeToken<HashMap<String, ArrayList<Music>>>(){}.getType();
         if (!sharedPreferences.getString("Playlists", "").equals("")) {
             playlists = gson.fromJson(sharedPreferences.getString("Playlists", ""), type);
@@ -184,7 +181,7 @@ public class Utility {
             if (newState == SlidingUpPanelLayout.PanelState.EXPANDED) {
                 activity.findViewById(R.id.BottomBar).setVisibility(View.INVISIBLE);
                 activity.findViewById(R.id.Song).setVisibility(View.VISIBLE);
-                pagerAdapter.notifyDataSetChanged();
+                ((ViewPager) activity.findViewById(R.id.ViewPager)).getAdapter().notifyDataSetChanged();
             } else if (newState == SlidingUpPanelLayout.PanelState.COLLAPSED) {
                 activity.findViewById(R.id.BottomBar).setVisibility(View.VISIBLE);
                 activity.findViewById(R.id.Song).setVisibility(View.INVISIBLE);
@@ -195,7 +192,8 @@ public class Utility {
         }
     }
 
-    public static void stop() {
+    public static void stop(Activity activity) {
+        SharedPreferences.Editor editor = activity.getPreferences(Context.MODE_PRIVATE).edit();
         String json;
         if (playing == null) {
             ArrayList<ArrayList<Music>> nullSongList = new ArrayList<>();
