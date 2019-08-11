@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
@@ -185,11 +186,9 @@ public class Adapter {
 
     static class NowPlaying extends PagerAdapter {
         Activity activity;
-        FragmentManager fragmentManager;
 
-        NowPlaying(Activity activity, FragmentManager fragmentManager) {
+        NowPlaying(Activity activity) {
             this.activity = activity;
-            this.fragmentManager = fragmentManager;
         }
 
         @Override
@@ -199,18 +198,10 @@ public class Adapter {
 
         @Override
         public Object instantiateItem(ViewGroup container, int position) {
+            View header = activity.getLayoutInflater().inflate(R.layout.header_playlist, container, false);
             View view = LayoutInflater.from(activity).inflate(R.layout.now_playing, container, false);
-            ((ListView) view.findViewById(R.id.NowPlaying)).setAdapter
-                    (new Adapter.OldSong(activity, R.layout.row_song, nowPlaying.get(position), fragmentManager));
-            ((ListView) view.findViewById(R.id.NowPlaying)).setOnItemClickListener(new OnClickListener.PlaySong(activity, true));
-            View header = activity.getLayoutInflater().inflate(R.layout.header_playlist, null);
-            if (nowPlaying.get(position).size() == 1) {
-                ((TextView) header.findViewById(R.id.PlaylistCount)).setText("1 song");
-            } else {
-                ((TextView) header.findViewById(R.id.PlaylistCount)).setText(nowPlaying.get(position).size() + " songs");
-            }
-            ((ListView) view.findViewById(R.id.NowPlaying)).addHeaderView(header, "Now Playing Header", false);
-            view.setTag(position);
+            RecyclerView recyclerView = view.findViewById(R.id.NowPlaying);
+            recyclerView.setAdapter(new Adapter.Song(activity, ((AppCompatActivity) activity).getSupportFragmentManager(), nowPlaying.get(position), true, header));
             container.addView(view);
             return view;
         }
@@ -405,7 +396,7 @@ public class Adapter {
                     ((TextView) songView.findViewById(R.id.Artist)).setTextColor(activity.getResources().getColor(R.color.colorPrimary));
                 }
 
-                songView.setOnClickListener(new OnClickListener.PlaySong2(activity, songs, position - headerOffset, multiple));
+                songView.setOnClickListener(new OnClickListener.PlaySong(activity, songs, position - headerOffset, multiple));
                 songView.findViewById(R.id.SongDropdown).setOnClickListener(new OnClickListener.SongMenu(activity, fragmentManager, song));
             }
         }

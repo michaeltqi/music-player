@@ -35,7 +35,6 @@ public class MainActivity extends AppCompatActivity {
     static SharedPreferences sharedPreferences;
     static SharedPreferences.Editor editor;
     static Gson gson = new Gson();
-    static NoisyReceiver noisyReceiver;
 
     static List<Music> songs;
     static MediaPlayer mp = new MediaPlayer();
@@ -112,13 +111,11 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
         });
-        noisyReceiver = new NoisyReceiver(this);
-        registerReceiver(noisyReceiver, new IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY));
+        registerReceiver(new Utility.NoisyReceiver(this), new IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY));
     }
 
     @Override
     public void onResume() {
-        noisyReceiver.setActivity(this);
         pagerAdapter.notifyDataSetChanged();
         super.onResume();
     }

@@ -264,10 +264,13 @@ public class OnClickListener {
 
         @Override
         public void onClick(View view) {
-            view.setEnabled(false);
-            Intent intent = new Intent(activity, NowPlayingActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-            activity.startActivity(intent);
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    Fragments.NowPlaying nowPlaying = Fragments.NowPlaying.newInstance(activity, (ViewGroup) activity.findViewById(R.id.Body));
+                    new AppRunnable.AddBodyFragment(activity, nowPlaying).run();
+                }
+            }).start();
         }
     }
 
@@ -345,28 +348,13 @@ public class OnClickListener {
         }
     }
 
-    static class PlaySong implements AdapterView.OnItemClickListener {
-        Activity activity;
-        boolean multiple;
-
-        PlaySong(Activity activity, boolean multiple) {
-            this.activity = activity;
-            this.multiple = multiple;
-        }
-
-        @Override
-        public void onItemClick(final AdapterView<?> parent, View view, int position, final long id) {
-            new Thread(new AppRunnable.PlaySong(activity, parent, position, id, multiple)).start();
-        }
-    }
-
-    static class PlaySong2 implements View.OnClickListener {
+    static class PlaySong implements View.OnClickListener {
         Activity activity;
         List<Music> songs;
         int position;
         boolean multiple;
 
-        PlaySong2(Activity activity, List<Music> songs, int position, boolean multiple) {
+        PlaySong(Activity activity, List<Music> songs, int position, boolean multiple) {
             this.activity = activity;
             this.songs = songs;
             this.position = position;
@@ -375,7 +363,7 @@ public class OnClickListener {
 
         @Override
         public void onClick(View view) {
-            new Thread(new AppRunnable.PlaySong2(activity, songs, position, multiple)).start();
+            new Thread(new AppRunnable.PlaySong(activity, songs, position, multiple)).start();
         }
     }
 

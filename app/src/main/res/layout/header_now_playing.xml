@@ -33,7 +33,7 @@
             android:paddingTop="18dp">
 
             <TextView
-                android:id="@+id/NowPlaying"
+                android:id="@+id/NowPlayingPlaylist"
                 android:layout_width="match_parent"
                 android:layout_height="65dp"
                 android:textColor="@color/textPrimaryColor"

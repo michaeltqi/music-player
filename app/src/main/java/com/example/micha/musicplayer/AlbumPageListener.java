@@ -28,6 +28,5 @@ public class AlbumPageListener extends ViewPager.SimpleOnPageChangeListener {
         }
         MainActivity.mp = MainActivity.mp.create(activity, Uri.fromFile(new File(playing.getPath())));
         MainActivity.mp.start();
-//        ((ImageView) layout.findViewById(R.id.PlayPause)).setImageResource(R.drawable.pause);
     }
 }

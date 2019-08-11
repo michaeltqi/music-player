@@ -1,7 +1,10 @@
 package com.example.micha.musicplayer;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Handler;
@@ -33,7 +36,6 @@ import static com.example.micha.musicplayer.MainActivity.handler;
 import static com.example.micha.musicplayer.MainActivity.loop;
 import static com.example.micha.musicplayer.MainActivity.mmr;
 import static com.example.micha.musicplayer.MainActivity.mp;
-import static com.example.micha.musicplayer.MainActivity.noisyReceiver;
 import static com.example.micha.musicplayer.MainActivity.nowPlaying;
 import static com.example.micha.musicplayer.MainActivity.nowPlayingPosition;
 import static com.example.micha.musicplayer.MainActivity.original;
@@ -58,13 +60,11 @@ public class Utility {
     }
 
     public static void initializeValues(Activity activity) {
-
         AppDataBase database = Room.databaseBuilder(activity, AppDataBase.class, "Music")
                 .allowMainThreadQueries()
                 .build();
         MusicDao musicDao = database.musicDao();
         songs = musicDao.getAll();
-
         for (String album: musicDao.getAlbums()) {
             if (album == null) {
                 albums.put("Other", new ArrayList<>(musicDao.nullAlbum()));
@@ -79,54 +79,61 @@ public class Utility {
                 genres.put(genre, new ArrayList<>(musicDao.songsByGenre(genre)));
             }
         }
-
         database.close();
 
         handler = new Handler(Looper.getMainLooper());
         sharedPreferences = activity.getPreferences(Context.MODE_PRIVATE);
         editor = sharedPreferences.edit();
-
         Type type = new TypeToken<HashMap<String, ArrayList<Music>>>(){}.getType();
         if (!sharedPreferences.getString("Playlists", "").equals("")) {
             playlists = gson.fromJson(sharedPreferences.getString("Playlists", ""), type);
         }
-
         type = new TypeToken<ArrayList<ArrayList<Music>>>(){}.getType();
         if (!sharedPreferences.getString("Now Playing", "").equals("")) {
             nowPlaying = gson.fromJson(sharedPreferences.getString("Now Playing", ""), type);
         } else {
             nowPlaying.add(new ArrayList<Music>());
         }
-
         if (!sharedPreferences.getString("Original", "").equals("")) {
             original = gson.fromJson(sharedPreferences.getString("Original", ""), type);
         } else {
             original.add(new ArrayList<Music>());
         }
-
         nowPlayingPosition = sharedPreferences.getInt("Now Playing Position", 0);
-
         type = new TypeToken<ArrayList<Integer>>(){}.getType();
         if (!sharedPreferences.getString("Playlist Position", "").equals("")) {
             playlistPosition = gson.fromJson(sharedPreferences.getString("Playlist Position", ""), type);
         } else {
             playlistPosition.add(0);
         }
-
         if (!sharedPreferences.getString("Timestamp", "").equals("")) {
             timestamp = gson.fromJson(sharedPreferences.getString("Timestamp", ""), type);
         } else {
             timestamp.add(0);
         }
-
         if (nowPlaying.get(0).size() > 0) {
             playing = nowPlaying.get(nowPlayingPosition).get(playlistPosition.get(nowPlayingPosition));
             mmr.setDataSource(playing.getPath());
         }
-
         shuffle = sharedPreferences.getBoolean("Shuffle", false);
-
         loop = sharedPreferences.getInt("Loop", 0);
+    }
+
+    public static class NoisyReceiver extends BroadcastReceiver {
+        Activity activity;
+
+        NoisyReceiver(Activity activity) {
+            this.activity = activity;
+        }
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (mp != null && mp.isPlaying() && intent.getAction().equals(AudioManager.ACTION_AUDIO_BECOMING_NOISY)) {
+                mp.pause();
+                ((ImageView) activity.findViewById(R.id.PlayPause)).setImageResource(R.drawable.play);
+                ((ImageView) activity.findViewById(R.id.PlayPauseB)).setImageResource(R.drawable.play);
+            }
+        }
     }
 
     public static class PageChangeListener extends ViewPager.SimpleOnPageChangeListener {
@@ -284,9 +291,6 @@ public class Utility {
                                 ((ViewPager) activity.findViewById(R.id.AlbumViewPager)).setCurrentItem(0);
                             }
                         });
-//                                playing = nowPlaying.get(nowPlayingPosition).get(playlistPosition.get(nowPlayingPosition));
-//                                AppRunnable.BottomBar next = new AppRunnable.BottomBar(activity, true, false);
-//                                new Thread(next).start();
                     }
                 } else {
                     playlistPosition.set(nowPlayingPosition, playlistPosition.get(nowPlayingPosition) + 1);
@@ -298,16 +302,6 @@ public class Utility {
                     });
                 }
             }
-        }
-    }
-
-    public static void transition(Activity activity) {
-        if (playing == null) {
-            activity.findViewById(R.id.AlbumIcon).setVisibility(View.INVISIBLE);
-            activity.findViewById(R.id.BottomTitle).setVisibility(View.INVISIBLE);
-            activity.findViewById(R.id.BottomArtist).setVisibility(View.INVISIBLE);
-            activity.findViewById(R.id.PlayPauseB).setVisibility(View.INVISIBLE);
-            activity.findViewById(R.id.ProgressBar).setVisibility(View.INVISIBLE);
         }
     }
 }

@@ -2,15 +2,14 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".NowPlayingActivity">
+    android:layout_height="match_parent">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/NowPlayingBar"
         android:layout_width="match_parent"
         android:layout_height="50dp"
+        app:layout_constraintTop_toTopOf="parent"
         android:background="@color/colorPrimary">
 
         <ImageView
@@ -26,7 +25,9 @@
             android:paddingBottom="5dp"
             android:paddingLeft="5dp"
             android:paddingStart="5dp"
+            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintRight_toLeftOf="@+id/PlayNowPlaying"
+            app:layout_constraintEnd_toStartOf="@+id/PlayNowPlaying"
             style="@style/SecondarySelectableItemBackground"/>
 
         <ImageView
@@ -36,6 +37,7 @@
             android:tint="@color/textPrimaryColor"
             android:layout_width="50dp"
             android:layout_height="50dp"
+            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             style="@style/SecondarySelectableItemBackground"/>
@@ -47,24 +49,6 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintTop_toBottomOf="@id/NowPlayingBar"
-        app:layout_constraintBottom_toTopOf="@id/BottomBar" />
-
-    <SeekBar
-        android:id="@+id/ProgressBar"
-        android:layout_width="match_parent"
-        android:layout_height="4dp"
-        app:layout_constraintBottom_toTopOf="@id/BottomBar"
-        android:padding="0dp"
-        android:paddingStart="0dp"
-        android:paddingEnd="0dp"
-        android:enabled="false"
-        android:thumb="@null" />
-
-    <include
-        layout="@layout/bottom_bar"
-        android:id="@+id/BottomBar"
-        android:layout_width="match_parent"
-        android:layout_height="56dp"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        app:layout_constraintBottom_toBottomOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

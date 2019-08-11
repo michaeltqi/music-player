@@ -202,70 +202,11 @@ public class AppRunnable {
 
     static class PlaySong implements Runnable {
         Activity activity;
-        AdapterView parent;
-        int position;
-        long id;
-        boolean multiple;
-
-        PlaySong(Activity activity, AdapterView parent, int position, long id, boolean multiple) {
-            this.activity = activity;
-            this.parent = parent;
-            this.position = position;
-            this.id = id;
-            this.multiple = multiple;
-        }
-
-        @Override
-        public void run() {
-            Music song = (Music) parent.getItemAtPosition(position);
-            if (playing == null || !playing.equals(song)) {
-                playing = song;
-                if (mp != null && mp.isPlaying()) {
-                    mp.stop();
-                }
-                mp = mp.create(activity, Uri.fromFile(new File(playing.getPath())));
-                mp.start();
-                mp.setOnCompletionListener(new Utility.SongCompletionListener(activity));
-            } else {
-                mp.start();
-            }
-            if (multiple) {
-                original.set(nowPlayingPosition, ((Adapter.OldSong) ((HeaderViewListAdapter) parent.getAdapter()).getWrappedAdapter()).music);
-                nowPlaying.set(nowPlayingPosition, new ArrayList<>(original.get(nowPlayingPosition)));
-                if (shuffle) {
-                    nowPlaying.get(nowPlayingPosition).remove((int) id);
-                    Collections.shuffle(nowPlaying.get(nowPlayingPosition));
-                    nowPlaying.get(nowPlayingPosition).add(0, playing);
-                    playlistPosition.set(nowPlayingPosition, 0);
-                } else {
-                    playlistPosition.set(nowPlayingPosition, (int) id);
-                }
-            } else {
-                original.set(nowPlayingPosition, Collections.singletonList(playing));
-                nowPlaying.set(nowPlayingPosition, new ArrayList<>(original.get(nowPlayingPosition)));
-                playlistPosition.set(nowPlayingPosition, 0);
-            }
-
-            mmr.setDataSource(playing.getPath());
-            activity.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    new SetupSong(activity, true).run();
-                    ((SlidingUpPanelLayout) activity.findViewById(R.id.SlidingUpPanelLayout)).setTouchEnabled(true);
-                    ((SlidingUpPanelLayout) activity.findViewById(R.id.SlidingUpPanelLayout)).setPanelState(SlidingUpPanelLayout.PanelState.EXPANDED);
-                    new AppRunnable.SetupBottom(activity, true).run();
-                }
-            });
-        }
-    }
-
-    static class PlaySong2 implements Runnable {
-        Activity activity;
         List<Music> songs;
         int position;
         boolean multiple;
 
-        PlaySong2(Activity activity, List<Music> songs, int position, boolean multiple) {
+        PlaySong(Activity activity, List<Music> songs, int position, boolean multiple) {
             this.activity = activity;
             this.songs = songs;
             this.position = position;
