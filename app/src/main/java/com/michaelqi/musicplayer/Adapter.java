@@ -196,6 +196,11 @@ public class Adapter {
         @Override
         public Object instantiateItem(ViewGroup container, int position) {
             View header = activity.getLayoutInflater().inflate(R.layout.header_playlist, container, false);
+            if (nowPlaying.get(position).size() == 1) {
+                ((TextView) header.findViewById(R.id.PlaylistCount)).setText("1 song");
+            } else {
+                ((TextView) header.findViewById(R.id.PlaylistCount)).setText(nowPlaying.get(position).size() + " songs");
+            }
             View view = LayoutInflater.from(activity).inflate(R.layout.now_playing, container, false);
             RecyclerView recyclerView = view.findViewById(R.id.NowPlaying);
             recyclerView.setAdapter(new Adapter.Song(activity, ((AppCompatActivity) activity).getSupportFragmentManager(), nowPlaying.get(position), true, header));
@@ -281,53 +286,6 @@ public class Adapter {
 
 //        view.findViewById(R.id.SongDropdown).
 //                setOnClickListener(new OnClickListener.SongMenu(getContext(), fragmentManager, song));
-
-            return view;
-        }
-    }
-
-    static class OldSong extends ArrayAdapter<Music> {
-        Context context;
-        int resource;
-        List<Music> music;
-        FragmentManager fragmentManager;
-
-        public OldSong(Context context, int resource, List<Music> music, FragmentManager fragmentManager) {
-            super(context, resource, music);
-            this.context = context;
-            this.resource = resource;
-            this.music = music;
-            this.fragmentManager = fragmentManager;
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            LayoutInflater layoutInflater = LayoutInflater.from(context);
-            View view = layoutInflater.inflate(resource, null, false);
-
-            Music song = music.get(position);
-            String title = song.getTitle() == null ? song.getPath() : song.getTitle();
-            String artist = song.getArtist() == null ? "" : song.getArtist();
-            long d = song.getDuration() == null ? 0 : Long.parseLong(song.getDuration()) / 1000;
-            long h = d / 3600;
-            long m = (d - h * 3600) / 60;
-            long s = d - (h * 3600 + m * 60);
-            String duration;
-            if (h == 0) {
-                duration = String.format("%d:%02d", m, s);
-            } else {
-                duration = String.format("%d:%d:%02d", h, m, s);
-            }
-
-            ((TextView) view.findViewById(R.id.Title)).setText(title);
-            ((TextView) view.findViewById(R.id.Artist)).setText(artist + " (" + duration + ")");
-            if (song.equals(playing)) {
-                ((TextView) view.findViewById(R.id.Title)).setTextColor(context.getResources().getColor(R.color.colorPrimary));
-                ((TextView) view.findViewById(R.id.Artist)).setTextColor(context.getResources().getColor(R.color.colorPrimary));
-            }
-
-            view.findViewById(R.id.SongDropdown).
-                    setOnClickListener(new OnClickListener.SongMenu(getContext(), fragmentManager, song));
 
             return view;
         }
