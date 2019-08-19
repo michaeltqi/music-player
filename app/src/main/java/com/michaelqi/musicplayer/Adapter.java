@@ -2,7 +2,9 @@ package com.michaelqi.musicplayer;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.MediaMetadataRetriever;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,13 +16,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.palette.graphics.Palette;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.PagerAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.michaelqi.musicplayer.MainActivity.albumViews;
+import static com.michaelqi.musicplayer.MainActivity.albums;
 import static com.michaelqi.musicplayer.MainActivity.mmr;
 import static com.michaelqi.musicplayer.MainActivity.nowPlaying;
 import static com.michaelqi.musicplayer.MainActivity.nowPlayingPosition;
@@ -50,29 +53,52 @@ public class Adapter {
         }
     }
 
-    static class Album extends ArrayAdapter<String> {
-        Context context;
-        int resource;
+    static class Album extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+        Activity activity;
         ArrayList<String> albumList;
+        MediaMetadataRetriever mmr;
 
-        public Album(Context context, int resource, ArrayList<String> albumList) {
-            super(context, resource, albumList);
-            this.context = context;
-            this.resource = resource;
+        Album(Activity activity, ArrayList<String> albumList) {
+            this.activity = activity;
             this.albumList = albumList;
+            this.mmr = new MediaMetadataRetriever();
+        }
+
+        public static class AlbumViewHolder extends RecyclerView.ViewHolder {
+            View view;
+            public AlbumViewHolder(View view) {
+                super(view);
+                this.view = view;
+            }
         }
 
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            if (albumViews.containsKey(position)) {
-                return albumViews.get(position);
+        public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.cell_album, parent, false);
+            AlbumViewHolder albumViewHolder = new AlbumViewHolder(view);
+            return albumViewHolder;
+        }
+
+        @Override
+        public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
+            View albumView = ((AlbumViewHolder) viewHolder).view;
+            String album = albumList.get(position);
+            mmr.setDataSource(albums.get(album).get(0).getPath());
+            byte[] image = mmr.getEmbeddedPicture();
+            if (image == null) {
+                ((ImageView) albumView.findViewById(R.id.AlbumImage)).setColorFilter(activity.getResources().getColor(R.color.textPrimaryColor));
+            } else {
+                Bitmap bitmap = BitmapFactory.decodeByteArray(image, 0, image.length);
+                ((ImageView) albumView.findViewById(R.id.AlbumImage)).setImageBitmap(bitmap);
+                int color = Utility.paletteColor(activity, Palette.from(bitmap).generate());
+                albumView.findViewById(R.id.AlbumName).setBackgroundColor(color);
             }
-            LayoutInflater layoutInflater = LayoutInflater.from(context);
-            View view = layoutInflater.inflate(resource, null, false);
-            new Thread(new AppRunnable.AlbumImage((Activity) context, view, albumList, position)).start();
-            ((TextView) view.findViewById(R.id.AlbumName)).setText(albumList.get(position));
-            albumViews.put(position, view);
-            return view;
+            albumView.setOnClickListener(new OnClickListener.Album(activity, album));
+        }
+
+        @Override
+        public int getItemCount() {
+            return albumList.size();
         }
     }
 

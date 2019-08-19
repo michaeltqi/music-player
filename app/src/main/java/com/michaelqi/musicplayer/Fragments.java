@@ -69,10 +69,9 @@ public class Fragments {
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             View layout = inflater.inflate(R.layout.page_album, container, false);
-            ArrayList<String> a = new ArrayList<>(albums.keySet());
-            Collections.sort(a, new Music.StringComparator());
-            ((GridView) layout.findViewById(R.id.Albums)).setAdapter(new Adapter.Album(getContext(), R.layout.cell_album, a));
-            ((GridView) layout.findViewById(R.id.Albums)).setOnItemClickListener(new OnClickListener.Album(getActivity()));
+            ArrayList<String> albumList = new ArrayList<>(albums.keySet());
+            Collections.sort(albumList, new Music.StringComparator());
+            ((RecyclerView) layout.findViewById(R.id.Albums)).setAdapter(new Adapter.Album((Activity) getContext(), albumList));
             return layout;
         }
     }

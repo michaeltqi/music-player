@@ -13,6 +13,7 @@ import android.os.Looper;
 import android.view.View;
 import android.widget.ImageView;
 
+import androidx.palette.graphics.Palette;
 import androidx.room.Room;
 import androidx.viewpager.widget.ViewPager;
 
@@ -159,6 +160,14 @@ public class Utility {
                 }
             });
         }
+    }
+
+    public static int paletteColor(Activity activity, Palette palette) {
+        int color = palette.getMutedColor(activity.getResources().getColor(R.color.colorPrimaryDark));
+        color = palette.getDarkMutedColor(color);
+        color = palette.getVibrantColor(color);
+        color = palette.getDarkVibrantColor(color);
+        return color;
     }
 
     public static class PanelListener implements SlidingUpPanelLayout.PanelSlideListener {

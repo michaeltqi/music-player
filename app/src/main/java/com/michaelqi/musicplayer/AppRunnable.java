@@ -3,12 +3,10 @@ package com.michaelqi.musicplayer;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.PorterDuff;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -17,11 +15,9 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.palette.graphics.Palette;
 import androidx.room.Room;
 import androidx.viewpager.widget.ViewPager;
 
-import com.bumptech.glide.Glide;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
 import java.io.File;
@@ -31,9 +27,6 @@ import java.util.HashMap;
 import java.util.List;
 
 import static android.view.View.VISIBLE;
-import static com.michaelqi.musicplayer.MainActivity.LOOP_ALL;
-import static com.michaelqi.musicplayer.MainActivity.LOOP_CURRENT;
-import static com.michaelqi.musicplayer.MainActivity.NO_LOOP;
 import static com.michaelqi.musicplayer.MainActivity.albums;
 import static com.michaelqi.musicplayer.MainActivity.genres;
 import static com.michaelqi.musicplayer.MainActivity.gson;
@@ -73,71 +66,6 @@ public class AppRunnable {
                     ft.commit();
                 }
             });
-        }
-    }
-
-    static class AlbumImage implements Runnable {
-        Activity activity;
-        View view;
-        ArrayList<String> albumList;
-        int position;
-        MediaMetadataRetriever mmr;
-
-        AlbumImage(Activity activity, View view, ArrayList<String> albumList, int position) {
-            this.activity = activity;
-            this.view = view;
-            this.albumList = albumList;
-            this.position = position;
-            mmr = new MediaMetadataRetriever();
-        }
-
-        @Override
-        public void run() {
-            mmr.setDataSource(albums.get(albumList.get(position)).get(0).getPath());
-            byte[] image = mmr.getEmbeddedPicture();
-            if (image == null) {
-                activity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        ((ImageView) view.findViewById(R.id.AlbumImage)).
-                                setColorFilter(activity.getResources().getColor(R.color.textPrimaryColor));
-                    }
-                });
-            } else {
-                Bitmap bitmap = BitmapFactory.decodeByteArray(image, 0, image.length);
-                Palette palette = Palette.from(bitmap).generate();
-                new SetAlbumImageRunnable(bitmap, color(palette)).run();
-            }
-        }
-
-        int color(Palette palette) {
-            int color = palette.getMutedColor(activity.getResources().getColor(R.color.colorPrimaryDark));
-            color = palette.getDarkMutedColor(color);
-            color = palette.getVibrantColor(color);
-            color = palette.getDarkVibrantColor(color);
-            return color;
-        }
-
-        class SetAlbumImageRunnable implements Runnable {
-            Bitmap bitmap;
-            int color;
-
-            SetAlbumImageRunnable(Bitmap bitmap, int color) {
-                this.bitmap = bitmap;
-                this.color = color;
-            }
-
-            @Override
-            public void run() {
-                activity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Glide.with(activity).load(bitmap).into((ImageView) view.findViewById(R.id.AlbumImage));
-                        ((ImageView) view.findViewById(R.id.AlbumImage)).setScaleType(ImageView.ScaleType.CENTER_CROP);
-                        view.findViewById(R.id.AlbumName).setBackgroundColor(color);
-                    }
-                });
-            }
         }
     }
 
@@ -415,42 +343,6 @@ public class AppRunnable {
         public void run() {
             new SetupSongScreen(activity, isPlaying).run();
             new SetupSongPager(activity).run();
-        }
-    }
-
-    public static class SetupSongBar implements Runnable {
-        Activity activity;
-
-        SetupSongBar(Activity activity) {
-            this.activity = activity;
-        }
-
-        @Override
-        public void run() {
-            switch(loop) {
-                case NO_LOOP:
-                    ((ImageView) activity.findViewById(R.id.LoopPlaylist)).
-                            setColorFilter(activity.getResources().getColor(R.color.colorSecondaryDark));
-                    ((ImageView) activity.findViewById(R.id.LoopPlaylist)).setImageResource(R.drawable.loop);
-                    break;
-                case LOOP_ALL:
-                    ((ImageView) activity.findViewById(R.id.LoopPlaylist)).
-                            setColorFilter(activity.getResources().getColor(R.color.textPrimaryColor));
-                    ((ImageView) activity.findViewById(R.id.LoopPlaylist)).setImageResource(R.drawable.loopall);
-                    break;
-                case LOOP_CURRENT:
-                    ((ImageView) activity.findViewById(R.id.LoopPlaylist)).
-                            setColorFilter(activity.getResources().getColor(R.color.textPrimaryColor));
-                    ((ImageView) activity.findViewById(R.id.LoopPlaylist)).setImageResource(R.drawable.loopcurrent);
-            }
-
-            if (shuffle) {
-                ((ImageView) activity.findViewById(R.id.ShufflePlaylist)).
-                        setColorFilter(activity.getResources().getColor(R.color.textPrimaryColor));
-            } else {
-                ((ImageView) activity.findViewById(R.id.LoopPlaylist)).
-                        setColorFilter(activity.getResources().getColor(R.color.colorSecondaryDark));
-            }
         }
     }
 

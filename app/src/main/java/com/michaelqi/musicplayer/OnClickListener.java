@@ -67,19 +67,21 @@ public class OnClickListener {
         }
     }
 
-    static class Album implements AdapterView.OnItemClickListener {
+    static class Album implements View.OnClickListener {
         Activity activity;
+        String albumName;
 
-        Album(Activity activity) {
+        Album(Activity activity, String albumName) {
             this.activity = activity;
+            this.albumName = albumName;
         }
 
         @Override
-        public void onItemClick(final AdapterView<?> parent, View view, int position, final long id) {
+        public void onClick(View view) {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    Fragments.Album album = Fragments.Album.newInstance(activity, (ViewGroup) activity.findViewById(R.id.Body), (String) parent.getItemAtPosition((int) id));
+                    Fragments.Album album = Fragments.Album.newInstance(activity, (ViewGroup) activity.findViewById(R.id.Body), albumName);
                     new AppRunnable.AddBodyFragment(activity, album).run();
                 }
             }).start();
