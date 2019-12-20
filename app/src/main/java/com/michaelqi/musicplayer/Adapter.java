@@ -136,11 +136,8 @@ public class Adapter {
 
             View view = LayoutInflater.from(activity).inflate(R.layout.album_image, container, false);
             if (image == null) {
-                ((ImageView) view.findViewById(R.id.AlbumImage)).setImageResource(R.drawable.eighth);
-                ((ImageView) view.findViewById(R.id.AlbumImage)).
-                        setColorFilter(activity.getResources().getColor(R.color.textSecondaryColor));
+                ((ImageView) view.findViewById(R.id.AlbumImage)).setImageResource(R.drawable.eighth2);
             } else {
-                ((ImageView) view.findViewById(R.id.AlbumImage)).setColorFilter(null);
                 ((ImageView) view.findViewById(R.id.AlbumImage)).
                         setImageBitmap(BitmapFactory.decodeByteArray(image, 0, image.length));
             }

@@ -300,11 +300,8 @@ public class AppRunnable {
 
             byte[] icon = mmr.getEmbeddedPicture();
             if (icon == null) {
-                ((ImageView) activity.findViewById(R.id.AlbumIcon)).
-                        setColorFilter(activity.getResources().getColor(R.color.textSecondaryColor));
-                ((ImageView) activity.findViewById(R.id.AlbumIcon)).setImageResource(R.drawable.eighth);
+                ((ImageView) activity.findViewById(R.id.AlbumIcon)).setImageResource(R.drawable.eighth2);
             } else {
-                ((ImageView) activity.findViewById(R.id.AlbumIcon)).setColorFilter(null);
                 ((ImageView) activity.findViewById(R.id.AlbumIcon)).setImageBitmap(BitmapFactory.decodeByteArray(icon, 0, icon.length));
             }
 
@@ -383,11 +380,8 @@ public class AppRunnable {
 
             byte[] image = mmr.getEmbeddedPicture();
             if (image == null) {
-                ((ImageView) activity.findViewById(R.id.Background)).
-                        setColorFilter(activity.getResources().getColor(R.color.textPrimaryColor));
-                ((ImageView) activity.findViewById(R.id.Background)).setImageResource(R.drawable.eighth);
+                ((ImageView) activity.findViewById(R.id.Background)).setImageResource(R.drawable.eighth2);
             } else {
-                ((ImageView) activity.findViewById(R.id.Background)).setColorFilter(null);
                 ((ImageView) activity.findViewById(R.id.Background)).setImageBitmap(BitmapFactory.decodeByteArray(image, 0, image.length));
             }
 

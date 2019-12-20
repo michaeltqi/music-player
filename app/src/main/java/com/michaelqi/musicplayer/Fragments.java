@@ -39,9 +39,7 @@ public class Fragments {
             mmr.setDataSource(songs.get(0).getPath());
             byte[] image = mmr.getEmbeddedPicture();
             if (image == null) {
-                ((ImageView) header.findViewById(R.id.AlbumImage)).
-                        setColorFilter(activity.getResources().getColor(R.color.textPrimaryColor));
-                ((ImageView) header.findViewById(R.id.AlbumImage)).setImageResource(R.drawable.eighth);
+                ((ImageView) header.findViewById(R.id.AlbumImage)).setImageResource(R.drawable.eighth2);
             } else {
                 ((ImageView) header.findViewById(R.id.AlbumImage)).setImageBitmap(BitmapFactory.decodeByteArray(image, 0, image.length));
             }
