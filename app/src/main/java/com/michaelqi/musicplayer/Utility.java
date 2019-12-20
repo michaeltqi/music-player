@@ -5,6 +5,9 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -48,6 +51,19 @@ import static com.michaelqi.musicplayer.MainActivity.songs;
 import static com.michaelqi.musicplayer.MainActivity.timestamp;
 
 public class Utility {
+    public static class AlbumGraphic {
+        Bitmap bitmap;
+        int color;
+        public AlbumGraphic(Activity activity, byte[] image) {
+            if (image == null) {
+                this.bitmap = BitmapFactory.decodeResource(activity.getResources(), R.drawable.eighth2);
+            } else {
+                this.bitmap = BitmapFactory.decodeByteArray(image, 0, image.length);
+            }
+            this.color = Utility.paletteColor(activity, Palette.from(bitmap).generate());
+        }
+    }
+
     public static String formatDuration(long duration) {
         long hour = duration / 3600;
         long minute = (duration - hour * 3600) / 60;

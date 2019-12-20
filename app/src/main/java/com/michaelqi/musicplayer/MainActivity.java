@@ -22,6 +22,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import static com.michaelqi.musicplayer.Utility.AlbumGraphic;
+
 public class MainActivity extends AppCompatActivity {
     static final int NO_LOOP = 0;
     static final int LOOP_ALL = 1;
@@ -39,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
     static HashMap<String, ArrayList<Music>> albums = new HashMap<>();
     static HashMap<String, ArrayList<Music>> genres = new HashMap<>();
     static HashMap<String, ArrayList<Music>> playlists = new HashMap<>();
-    static HashMap<Integer, View> albumViews = new HashMap<>();
+    static HashMap<String, AlbumGraphic> albumGraphics = new HashMap<>();
 
     static Music playing;
     static ArrayList<ArrayList<Music>> nowPlaying = new ArrayList<>();

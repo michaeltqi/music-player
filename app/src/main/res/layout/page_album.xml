@@ -11,6 +11,7 @@
         android:horizontalSpacing="2dp"
         android:verticalSpacing="2dp"
         android:background="@color/colorPrimaryDark"
+        app:spanCount="2"
         app:layoutManager="androidx.recyclerview.widget.GridLayoutManager">
     </androidx.recyclerview.widget.RecyclerView>
 

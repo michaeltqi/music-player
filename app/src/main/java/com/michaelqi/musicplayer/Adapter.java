@@ -23,6 +23,7 @@ import androidx.viewpager.widget.PagerAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.michaelqi.musicplayer.MainActivity.albumGraphics;
 import static com.michaelqi.musicplayer.MainActivity.albums;
 import static com.michaelqi.musicplayer.MainActivity.mmr;
 import static com.michaelqi.musicplayer.MainActivity.nowPlaying;
@@ -83,16 +84,25 @@ public class Adapter {
         public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
             View albumView = ((AlbumViewHolder) viewHolder).view;
             String album = albumList.get(position);
-            mmr.setDataSource(albums.get(album).get(0).getPath());
-            byte[] image = mmr.getEmbeddedPicture();
-            if (image == null) {
-                ((ImageView) albumView.findViewById(R.id.AlbumImage)).setColorFilter(activity.getResources().getColor(R.color.textPrimaryColor));
-            } else {
-                Bitmap bitmap = BitmapFactory.decodeByteArray(image, 0, image.length);
-                ((ImageView) albumView.findViewById(R.id.AlbumImage)).setImageBitmap(bitmap);
-                int color = Utility.paletteColor(activity, Palette.from(bitmap).generate());
-                albumView.findViewById(R.id.AlbumName).setBackgroundColor(color);
+            ((TextView) albumView.findViewById(R.id.AlbumName)).setText(album);
+            if (!albumGraphics.containsKey(album)) {
+                mmr.setDataSource(albums.get(album).get(0).getPath());
+                byte[] image = mmr.getEmbeddedPicture();
+                albumGraphics.put(album, new Utility.AlbumGraphic(activity, image));
             }
+            Utility.AlbumGraphic albumGraphic = albumGraphics.get(album);
+            ((ImageView) albumView.findViewById(R.id.AlbumImage)).setImageBitmap(albumGraphic.bitmap);
+            albumView.findViewById(R.id.AlbumName).setBackgroundColor(albumGraphic.color);
+//            mmr.setDataSource(albums.get(album).get(0).getPath());
+//            byte[] image = mmr.getEmbeddedPicture();
+//            if (image == null) {
+//                ((ImageView) albumView.findViewById(R.id.AlbumImage)).setColorFilter(activity.getResources().getColor(R.color.textPrimaryColor));
+//            } else {
+//                Bitmap bitmap = BitmapFactory.decodeByteArray(image, 0, image.length);
+//                ((ImageView) albumView.findViewById(R.id.AlbumImage)).setImageBitmap(bitmap);
+//                int color = Utility.paletteColor(activity, Palette.from(bitmap).generate());
+//                albumView.findViewById(R.id.AlbumName).setBackgroundColor(color);
+//            }
             albumView.setOnClickListener(new OnClickListener.Album(activity, album));
         }
 
@@ -309,9 +319,6 @@ public class Adapter {
 
             ((TextView) view.findViewById(R.id.Title)).setText(title);
             ((TextView) view.findViewById(R.id.Artist)).setText(artist + " (" + duration + ")");
-
-//        view.findViewById(R.id.SongDropdown).
-//                setOnClickListener(new OnClickListener.SongMenu(getContext(), fragmentManager, song));
 
             return view;
         }
