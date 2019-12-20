@@ -13,6 +13,7 @@ import static com.michaelqi.musicplayer.MainActivity.nowPlayingPosition;
 import static com.michaelqi.musicplayer.MainActivity.playlistPosition;
 import static com.michaelqi.musicplayer.MainActivity.playing;
 
+/* Manages MediaPlayer when a new page in the full screen sliding pane is selected */
 public class AlbumPageListener extends ViewPager.SimpleOnPageChangeListener {
     Activity activity;
 

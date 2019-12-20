@@ -11,6 +11,7 @@ import java.util.List;
 
 import static com.michaelqi.musicplayer.MainActivity.playlists;
 
+/* Dialog for adding a song to a playlist */
 public class AddPlaylistDialog extends DialogFragment {
     Music song;
 

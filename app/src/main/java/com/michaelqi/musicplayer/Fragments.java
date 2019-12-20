@@ -16,6 +16,8 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
+import com.bumptech.glide.Glide;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -29,6 +31,7 @@ import static com.michaelqi.musicplayer.MainActivity.songs;
 
 public class Fragments {
 
+    /* Album fragment (after selecting from album page) */
     public static class Album extends Fragment {
         View layout;
 
@@ -63,17 +66,17 @@ public class Fragments {
         }
     }
 
+    /* Album page fragment in main view pager */
     public static class AlbumPage extends Fragment {
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             View layout = inflater.inflate(R.layout.page_album, container, false);
-            ArrayList<String> albumList = new ArrayList<>(albums.keySet());
-            Collections.sort(albumList, new Music.StringComparator());
-            ((RecyclerView) layout.findViewById(R.id.Albums)).setAdapter(new Adapter.Album((Activity) getContext(), albumList));
+            ((RecyclerView) layout.findViewById(R.id.Albums)).setAdapter(new Adapter.Album((Activity) getContext()));
             return layout;
         }
     }
 
+    /* Genre fragment (after selecting from genre page) */
     public static class Genre extends Fragment {
         View layout;
 
@@ -101,6 +104,7 @@ public class Fragments {
         }
     }
 
+    /* Genre page fragment in main view pager */
     public static class GenrePage extends Fragment {
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -113,6 +117,7 @@ public class Fragments {
         }
     }
 
+    /* Now playing fragment (after selecting now playing on playlist page) */
     public static class NowPlaying extends Fragment {
         View layout;
 
@@ -136,6 +141,7 @@ public class Fragments {
         }
     }
 
+    /* Playlist fragment (after selecting from playlist page) */
     public static class Playlist extends Fragment {
         View layout;
 
@@ -163,6 +169,7 @@ public class Fragments {
         }
     }
 
+    /* Playlist page fragment in main view pager */
     public static class PlaylistPage extends Fragment {
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -190,6 +197,7 @@ public class Fragments {
         }
     }
 
+    /* Song page fragment in main view pager */
     public static class SongPage extends Fragment {
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {

@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -33,6 +32,7 @@ import static android.view.View.INVISIBLE;
 import static com.michaelqi.musicplayer.MainActivity.LOOP_ALL;
 import static com.michaelqi.musicplayer.MainActivity.LOOP_CURRENT;
 import static com.michaelqi.musicplayer.MainActivity.NO_LOOP;
+import static com.michaelqi.musicplayer.MainActivity.albumList;
 import static com.michaelqi.musicplayer.MainActivity.albums;
 import static com.michaelqi.musicplayer.MainActivity.genres;
 import static com.michaelqi.musicplayer.MainActivity.gson;
@@ -51,6 +51,8 @@ import static com.michaelqi.musicplayer.MainActivity.songs;
 import static com.michaelqi.musicplayer.MainActivity.timestamp;
 
 public class Utility {
+
+    /* Object to cache album images and associated colors */
     public static class AlbumGraphic {
         Bitmap bitmap;
         int color;
@@ -64,6 +66,7 @@ public class Utility {
         }
     }
 
+    /* Standardizes song duration format */
     public static String formatDuration(long duration) {
         long hour = duration / 3600;
         long minute = (duration - hour * 3600) / 60;
@@ -74,6 +77,7 @@ public class Utility {
         return String.format("%d:%d:%02d", hour, minute, second);
     }
 
+    /* Initializes all static variables in the app */
     public static void initializeValues(Activity activity) {
         AppDataBase database = Room.databaseBuilder(activity, AppDataBase.class, "Music")
                 .allowMainThreadQueries()
@@ -95,6 +99,9 @@ public class Utility {
             }
         }
         database.close();
+
+        albumList = new ArrayList<>(albums.keySet());
+        Collections.sort(albumList, new Music.StringComparator());
 
         handler = new Handler(Looper.getMainLooper());
         SharedPreferences sharedPreferences = activity.getPreferences(Context.MODE_PRIVATE);
@@ -133,6 +140,7 @@ public class Utility {
         loop = sharedPreferences.getInt("Loop", 0);
     }
 
+    /* Manages external interruptions (unplugging headphones) */
     public static class NoisyReceiver extends BroadcastReceiver {
         Activity activity;
 
@@ -150,6 +158,8 @@ public class Utility {
         }
     }
 
+    /* Manages page listener for large sliding pane */
+    // TODO: Examine relationship with AlbumPageListener
     public static class PageChangeListener extends ViewPager.SimpleOnPageChangeListener {
         Activity activity;
 
@@ -178,6 +188,7 @@ public class Utility {
         }
     }
 
+    /* Gets dominant color from palette */
     public static int paletteColor(Activity activity, Palette palette) {
         int color = palette.getMutedColor(activity.getResources().getColor(R.color.colorPrimaryDark));
         color = palette.getDarkMutedColor(color);
@@ -186,6 +197,7 @@ public class Utility {
         return color;
     }
 
+    /* Manages panel slide transitions */
     public static class PanelListener implements SlidingUpPanelLayout.PanelSlideListener {
         Activity activity;
 
@@ -217,6 +229,7 @@ public class Utility {
         }
     }
 
+    /* Manages saving data upon ending fragment */
     public static void stop(Activity activity) {
         SharedPreferences.Editor editor = activity.getPreferences(Context.MODE_PRIVATE).edit();
         String json;
@@ -260,6 +273,7 @@ public class Utility {
         editor.apply();
     }
 
+    /* Manages transitioning to next song */
     static class SongCompletionListener implements MediaPlayer.OnCompletionListener {
         Activity activity;
 

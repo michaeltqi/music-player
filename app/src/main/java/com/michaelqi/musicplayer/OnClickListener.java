@@ -40,6 +40,8 @@ import static com.michaelqi.musicplayer.MainActivity.playlists;
 import static com.michaelqi.musicplayer.MainActivity.shuffle;
 
 public class OnClickListener {
+
+    /* Manages selecting a playlist to add a song to */
     static class AddPlaylist implements Dialog.OnClickListener {
         Activity activity;
         Adapter.AddPlaylist addPlaylistAdapter;
@@ -67,6 +69,7 @@ public class OnClickListener {
         }
     }
 
+    /* Manages selecting an album from the main view pager */
     static class Album implements View.OnClickListener {
         Activity activity;
         String albumName;
@@ -88,6 +91,7 @@ public class OnClickListener {
         }
     }
 
+    /* Manages the previous and next buttons */
     static class ChangeTrack implements View.OnClickListener {
         Activity activity;
         int change;
@@ -129,6 +133,7 @@ public class OnClickListener {
         }
     }
 
+    /* Manages selecting a genre from the main view pager */
     static class Genre implements AdapterView.OnItemClickListener {
         Activity activity;
 
@@ -148,6 +153,7 @@ public class OnClickListener {
         }
     }
 
+    /* Manages the menu in the genre page fragment in the main view pager */
     static class GenreMenu implements View.OnClickListener {
         Context context;
         String genre;
@@ -172,6 +178,7 @@ public class OnClickListener {
         }
     }
 
+    /* Manages the loop button */
     static class LoopPlaylist implements View.OnClickListener {
         Activity activity;
 
@@ -213,6 +220,7 @@ public class OnClickListener {
         }
     }
 
+    /* Manages the main menu in the collapsed sliding pane */
     static class MainMenu implements View.OnClickListener {
         Activity activity;
 
@@ -236,6 +244,7 @@ public class OnClickListener {
         }
     }
 
+    /* Manages the menu in the now playing entry in the playlist page fragment of the main view pager */
     static class NowPlayingMenu implements View.OnClickListener {
         Context context;
 
@@ -258,6 +267,7 @@ public class OnClickListener {
         }
     }
 
+    /* Manages selecting the now playing playlist in the playlist page fragment of the main view pager */
     static class NowPlaying implements View.OnClickListener {
         Activity activity;
 
@@ -277,6 +287,7 @@ public class OnClickListener {
         }
     }
 
+    /* Manages the menu in the playlist page fragment in the main view pager */
     static class PlaylistMenu implements View.OnClickListener {
         Context context;
         String playlist;
@@ -301,6 +312,7 @@ public class OnClickListener {
         }
     }
 
+    /* Manages all play/pause buttons */
     static class PlayPause implements View.OnClickListener {
         Activity activity;
 
@@ -333,6 +345,7 @@ public class OnClickListener {
         }
     }
 
+    /* Manages selecting a playlist from the main view pager */
     static class Playlist implements AdapterView.OnItemClickListener {
         Activity activity;
 
@@ -351,6 +364,7 @@ public class OnClickListener {
         }
     }
 
+    /* Manages selecting a song */
     static class PlaySong implements View.OnClickListener {
         Activity activity;
         List<Music> songs;
@@ -370,6 +384,7 @@ public class OnClickListener {
         }
     }
 
+    /* Manages pressing the play or shuffle buttons at the top of album, genre, and playlist fragments */
     static class PlaySongList implements View.OnClickListener {
         Activity activity;
         List<Music> songs;
@@ -419,6 +434,7 @@ public class OnClickListener {
         }
     }
 
+    /* Manages pressing the shuffle button */
     static class ShufflePlaylist implements View.OnClickListener {
         Activity activity;
 
@@ -449,6 +465,7 @@ public class OnClickListener {
         }
     }
 
+    /* Manages the menu in the song page in the main view pager */
     static class SongMenu implements View.OnClickListener {
         Context context;
         FragmentManager fragmentManager;

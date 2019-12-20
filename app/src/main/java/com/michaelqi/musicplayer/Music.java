@@ -6,6 +6,7 @@ import androidx.room.PrimaryKey;
 
 import java.util.Comparator;
 
+/* Music object abstraction */
 @Entity(tableName = "Music")
 public class Music {
 

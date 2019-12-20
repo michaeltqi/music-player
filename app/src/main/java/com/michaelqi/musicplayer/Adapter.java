@@ -20,10 +20,13 @@ import androidx.palette.graphics.Palette;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.PagerAdapter;
 
+import com.bumptech.glide.Glide;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import static com.michaelqi.musicplayer.MainActivity.albumGraphics;
+import static com.michaelqi.musicplayer.MainActivity.albumList;
 import static com.michaelqi.musicplayer.MainActivity.albums;
 import static com.michaelqi.musicplayer.MainActivity.mmr;
 import static com.michaelqi.musicplayer.MainActivity.nowPlaying;
@@ -31,6 +34,8 @@ import static com.michaelqi.musicplayer.MainActivity.nowPlayingPosition;
 import static com.michaelqi.musicplayer.MainActivity.playing;
 
 public class Adapter {
+
+    /* Adapter for adding a song to a playlist */
     static class AddPlaylist extends ArrayAdapter<String> {
         Context context;
         int resource;
@@ -54,14 +59,13 @@ public class Adapter {
         }
     }
 
+    /* Adapter for album page fragment in main view pager */
     static class Album extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         Activity activity;
-        ArrayList<String> albumList;
         MediaMetadataRetriever mmr;
 
-        Album(Activity activity, ArrayList<String> albumList) {
+        Album(Activity activity) {
             this.activity = activity;
-            this.albumList = albumList;
             this.mmr = new MediaMetadataRetriever();
         }
 
@@ -91,18 +95,8 @@ public class Adapter {
                 albumGraphics.put(album, new Utility.AlbumGraphic(activity, image));
             }
             Utility.AlbumGraphic albumGraphic = albumGraphics.get(album);
-            ((ImageView) albumView.findViewById(R.id.AlbumImage)).setImageBitmap(albumGraphic.bitmap);
+            Glide.with(activity).load(albumGraphic.bitmap).into((ImageView) albumView.findViewById(R.id.AlbumImage));
             albumView.findViewById(R.id.AlbumName).setBackgroundColor(albumGraphic.color);
-//            mmr.setDataSource(albums.get(album).get(0).getPath());
-//            byte[] image = mmr.getEmbeddedPicture();
-//            if (image == null) {
-//                ((ImageView) albumView.findViewById(R.id.AlbumImage)).setColorFilter(activity.getResources().getColor(R.color.textPrimaryColor));
-//            } else {
-//                Bitmap bitmap = BitmapFactory.decodeByteArray(image, 0, image.length);
-//                ((ImageView) albumView.findViewById(R.id.AlbumImage)).setImageBitmap(bitmap);
-//                int color = Utility.paletteColor(activity, Palette.from(bitmap).generate());
-//                albumView.findViewById(R.id.AlbumName).setBackgroundColor(color);
-//            }
             albumView.setOnClickListener(new OnClickListener.Album(activity, album));
         }
 
@@ -112,6 +106,7 @@ public class Adapter {
         }
     }
 
+    /* Adapter for album images in full screen sliding pane */
     static class AlbumImage extends PagerAdapter {
         Activity activity;
 
@@ -151,6 +146,7 @@ public class Adapter {
         }
     }
 
+    /* Adapter for genre page fragment in main view pager */
     static class Genre extends ArrayAdapter<String>  {
         Context context;
         int resource;
@@ -176,6 +172,7 @@ public class Adapter {
         }
     }
 
+    /* Manages four main fragments of the app */
     static class MusicPager extends FragmentPagerAdapter {
         public MusicPager(FragmentManager fragmentManager) {
             super(fragmentManager);
@@ -214,6 +211,7 @@ public class Adapter {
         }
     }
 
+    /* Adapter for now playing page fragment in main view pager */
     static class NowPlaying extends PagerAdapter {
         Activity activity;
 
@@ -257,6 +255,7 @@ public class Adapter {
         }
     }
 
+    /* Adapter for playlist page fragment in main view pager */
     static class Playlist extends ArrayAdapter<String> {
         Context context;
         int resource;
@@ -281,46 +280,7 @@ public class Adapter {
         }
     }
 
-    static class PlaylistSong extends ArrayAdapter<Music> {
-        Context context;
-        int resource;
-        List<Music> music;
-        FragmentManager fragmentManager;
-
-        public PlaylistSong(Context context, int resource, List<Music> music, FragmentManager fragmentManager) {
-            super(context, resource, music);
-            this.context = context;
-            this.resource = resource;
-            this.music = music;
-            this.fragmentManager = fragmentManager;
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            LayoutInflater layoutInflater = LayoutInflater.from(context);
-            View view = layoutInflater.inflate(resource, null, false);
-
-            Music song = music.get(position);
-            String title = song.getTitle() == null ? song.getPath() : song.getTitle();
-            String artist = song.getArtist() == null ? "" : song.getArtist();
-            long d = song.getDuration() == null ? 0 : Long.parseLong(song.getDuration()) / 1000;
-            long h = d / 3600;
-            long m = (d - h * 3600) / 60;
-            long s = d - (h * 3600 + m * 60);
-            String duration;
-            if (h == 0) {
-                duration = String.format("%d:%02d", m, s);
-            } else {
-                duration = String.format("%d:%d:%02d", h, m, s);
-            }
-
-            ((TextView) view.findViewById(R.id.Title)).setText(title);
-            ((TextView) view.findViewById(R.id.Artist)).setText(artist + " (" + duration + ")");
-
-            return view;
-        }
-    }
-
+    /* Adapter for all song page fragments (multiple and header differentiate between main view pager and others) */
     static class Song extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         Activity activity;
         FragmentManager fragmentManager;

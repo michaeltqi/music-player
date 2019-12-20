@@ -27,6 +27,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import static android.view.View.VISIBLE;
+import static com.michaelqi.musicplayer.MainActivity.albumList;
 import static com.michaelqi.musicplayer.MainActivity.albums;
 import static com.michaelqi.musicplayer.MainActivity.genres;
 import static com.michaelqi.musicplayer.MainActivity.gson;
@@ -46,6 +47,8 @@ import static com.michaelqi.musicplayer.MainActivity.songs;
 import static com.michaelqi.musicplayer.MainActivity.timestamp;
 
 public class AppRunnable {
+
+    /* Manages replacing the screen with a new fragment */
     static class AddBodyFragment implements Runnable {
         Activity activity;
         Fragment fragment;
@@ -69,6 +72,7 @@ public class AppRunnable {
         }
     }
 
+    /* Manages creating a new playlist */
     static class NewPlaylist implements Runnable {
         Activity activity;
         String newPlaylist;
@@ -102,6 +106,7 @@ public class AppRunnable {
         }
     }
 
+    /* Sets up the sliding pane layout */
     static class OnStart implements Runnable {
         Activity activity;
 
@@ -127,6 +132,7 @@ public class AppRunnable {
         }
     }
 
+    /* Manages setting up sliding pane layout and MediaPlayer upon selecting song */
     static class PlaySong implements Runnable {
         Activity activity;
         List<Music> songs;
@@ -186,6 +192,7 @@ public class AppRunnable {
         }
     }
 
+    /* Manages retrieving and storing data from files */
     static class RefreshData implements Runnable {
         Activity activity;
 
@@ -262,6 +269,9 @@ public class AppRunnable {
             String json = gson.toJson(albums);
             editor.putString("Albums", json);
 
+            albumList = new ArrayList<>(albums.keySet());
+            Collections.sort(albumList, new Music.StringComparator());
+
             genres = genreRefresh;
             json = gson.toJson(genres);
             editor.putString("Genres", json);
@@ -278,6 +288,7 @@ public class AppRunnable {
         }
     }
 
+    /* Sets up the display for the collapsed sliding pane layout */
     public static class SetupBottom implements Runnable {
         Activity activity;
         boolean isPlaying;
@@ -327,6 +338,7 @@ public class AppRunnable {
         }
     }
 
+    /* Sets up the full screen sliding pane layout */
     public static class SetupSong implements Runnable {
         Activity activity;
         boolean isPlaying;
@@ -343,6 +355,7 @@ public class AppRunnable {
         }
     }
 
+    /* Sets up the pager for the full screen sliding pane layout */
     public static class SetupSongPager implements Runnable {
         Activity activity;
 
@@ -358,6 +371,7 @@ public class AppRunnable {
         }
     }
 
+    /* Sets up the display for the full screen sliding pane layout */
     public static class SetupSongScreen implements Runnable {
         Activity activity;
         boolean isPlaying;

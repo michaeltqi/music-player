@@ -25,32 +25,41 @@ import java.util.List;
 import static com.michaelqi.musicplayer.Utility.AlbumGraphic;
 
 public class MainActivity extends AppCompatActivity {
+    /* Static constants for loop state */
     static final int NO_LOOP = 0;
     static final int LOOP_ALL = 1;
     static final int LOOP_CURRENT = 2;
 
+    /* Path to music folder */
+    // TODO: Make dynamic
     static String path = Environment.getExternalStorageDirectory().toString() + "/Music";
 
+    /* Static objects for serializing data */
     static Handler handler;
     static Gson gson = new Gson();
 
-    static List<Music> songs;
+    /* Static variables for the current state of the app */
+    static Music playing;
+    static int nowPlayingPosition = -1;
+    static boolean shuffle;
+    static int loop;
     static MediaPlayer mp = new MediaPlayer();
     static MediaMetadataRetriever mmr = new MediaMetadataRetriever();
 
+    /* Static data structures to store media information */
+    static List<Music> songs;
     static HashMap<String, ArrayList<Music>> albums = new HashMap<>();
+    static HashMap<String, AlbumGraphic> albumGraphics = new HashMap<>();
+    static List<String> albumList = new ArrayList<>();
     static HashMap<String, ArrayList<Music>> genres = new HashMap<>();
     static HashMap<String, ArrayList<Music>> playlists = new HashMap<>();
-    static HashMap<String, AlbumGraphic> albumGraphics = new HashMap<>();
 
-    static Music playing;
+    /* Static lists to record the app's background state */
     static ArrayList<ArrayList<Music>> nowPlaying = new ArrayList<>();
     static ArrayList<List<Music>> original = new ArrayList<>();
-    static int nowPlayingPosition = -1;
     static ArrayList<Integer> playlistPosition = new ArrayList<>();
     static ArrayList<Integer> timestamp = new ArrayList<>();
-    static boolean shuffle;
-    static int loop;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
