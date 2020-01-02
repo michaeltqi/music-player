@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.BitmapFactory;
 import android.graphics.PorterDuff;
+import android.media.AudioManager;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.widget.ImageView;
@@ -29,6 +30,8 @@ import java.util.List;
 import static android.view.View.VISIBLE;
 import static com.michaelqi.musicplayer.MainActivity.albumList;
 import static com.michaelqi.musicplayer.MainActivity.albums;
+import static com.michaelqi.musicplayer.MainActivity.audioFocus;
+import static com.michaelqi.musicplayer.MainActivity.audioManager;
 import static com.michaelqi.musicplayer.MainActivity.genres;
 import static com.michaelqi.musicplayer.MainActivity.gson;
 import static com.michaelqi.musicplayer.MainActivity.handler;
@@ -148,6 +151,7 @@ public class AppRunnable {
 
         @Override
         public void run() {
+            audioFocus = audioFocus || audioManager.requestAudioFocus(new Utility.FocusListener(activity), AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN) == AudioManager.AUDIOFOCUS_REQUEST_GRANTED;
             Music song = songs.get(position);
             if (playing == null || !playing.equals(song)) {
                 playing = song;
@@ -155,9 +159,11 @@ public class AppRunnable {
                     mp.stop();
                 }
                 mp = mp.create(activity, Uri.fromFile(new File(playing.getPath())));
-                mp.start();
+                if (audioFocus) {
+                    mp.start();
+                }
                 mp.setOnCompletionListener(new Utility.SongCompletionListener(activity));
-            } else {
+            } else if (audioFocus) {
                 mp.start();
             }
             original.set(nowPlayingPosition, songs);
@@ -183,10 +189,10 @@ public class AppRunnable {
             activity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    new SetupSong(activity, true).run();
+                    new SetupSong(activity, audioFocus).run();
                     ((SlidingUpPanelLayout) activity.findViewById(R.id.SlidingUpPanelLayout)).setTouchEnabled(true);
                     ((SlidingUpPanelLayout) activity.findViewById(R.id.SlidingUpPanelLayout)).setPanelState(SlidingUpPanelLayout.PanelState.EXPANDED);
-                    new AppRunnable.SetupBottom(activity, true).run();
+                    new AppRunnable.SetupBottom(activity, audioFocus).run();
                 }
             });
         }

@@ -60,6 +60,9 @@ public class MainActivity extends AppCompatActivity {
     static ArrayList<Integer> playlistPosition = new ArrayList<>();
     static ArrayList<Integer> timestamp = new ArrayList<>();
 
+    /* Static variables for audio focus */
+    static AudioManager audioManager;
+    static boolean audioFocus;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

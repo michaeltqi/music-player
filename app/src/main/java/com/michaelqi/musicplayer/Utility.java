@@ -34,6 +34,8 @@ import static com.michaelqi.musicplayer.MainActivity.LOOP_CURRENT;
 import static com.michaelqi.musicplayer.MainActivity.NO_LOOP;
 import static com.michaelqi.musicplayer.MainActivity.albumList;
 import static com.michaelqi.musicplayer.MainActivity.albums;
+import static com.michaelqi.musicplayer.MainActivity.audioFocus;
+import static com.michaelqi.musicplayer.MainActivity.audioManager;
 import static com.michaelqi.musicplayer.MainActivity.genres;
 import static com.michaelqi.musicplayer.MainActivity.gson;
 import static com.michaelqi.musicplayer.MainActivity.handler;
@@ -63,6 +65,34 @@ public class Utility {
                 this.bitmap = BitmapFactory.decodeByteArray(image, 0, image.length);
             }
             this.color = Utility.paletteColor(activity, Palette.from(bitmap).generate());
+        }
+    }
+
+    /* Listener for audio focus changes */
+    public static class FocusListener implements AudioManager.OnAudioFocusChangeListener {
+        Activity activity;
+
+        public FocusListener(Activity activity) {
+            this.activity = activity;
+        }
+
+        @Override
+        public void onAudioFocusChange(int focusChange) {
+            if (focusChange == AudioManager.AUDIOFOCUS_GAIN) {
+                audioFocus = true;
+                if (mp != null) {
+                    mp.start();
+                    ((ImageView) activity.findViewById(R.id.PlayPauseB)).setImageResource(R.drawable.pause);
+                    ((ImageView) activity.findViewById(R.id.PlayPause)).setImageResource(R.drawable.pause);
+                }
+            } else if (focusChange == AudioManager.AUDIOFOCUS_LOSS || focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT) {
+                audioFocus = false;
+                if (mp != null && mp.isPlaying()) {
+                    mp.pause();
+                    ((ImageView) activity.findViewById(R.id.PlayPauseB)).setImageResource(R.drawable.play);
+                    ((ImageView) activity.findViewById(R.id.PlayPause)).setImageResource(R.drawable.play);
+                }
+            }
         }
     }
 
@@ -138,6 +168,8 @@ public class Utility {
         }
         shuffle = sharedPreferences.getBoolean("Shuffle", false);
         loop = sharedPreferences.getInt("Loop", 0);
+
+        audioManager = (AudioManager) activity.getSystemService(Context.AUDIO_SERVICE);
     }
 
     /* Manages external interruptions (unplugging headphones) */
@@ -159,7 +191,6 @@ public class Utility {
     }
 
     /* Manages page listener for large sliding pane */
-    // TODO: Examine relationship with AlbumPageListener
     public static class PageChangeListener extends ViewPager.SimpleOnPageChangeListener {
         Activity activity;
 
@@ -175,14 +206,17 @@ public class Utility {
                 mp.stop();
             }
             mp = mp.create(activity, Uri.fromFile(new File(playing.getPath())));
-            mp.start();
+            audioFocus = audioFocus || audioManager.requestAudioFocus(new FocusListener(activity), AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN) == AudioManager.AUDIOFOCUS_REQUEST_GRANTED;
+            if (audioFocus) {
+                mp.start();
+            }
             mp.setOnCompletionListener(new SongCompletionListener(activity));
             mmr.setDataSource(playing.getPath());
             activity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    new AppRunnable.SetupSongScreen(activity, true).run();
-                    new AppRunnable.SetupBottom(activity, true).run();
+                    new AppRunnable.SetupSongScreen(activity, audioFocus).run();
+                    new AppRunnable.SetupBottom(activity, audioFocus).run();
                 }
             });
         }

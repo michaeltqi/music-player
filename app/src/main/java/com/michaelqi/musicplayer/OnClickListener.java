@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.media.AudioManager;
 import android.net.Uri;
 import android.view.MenuItem;
 import android.view.View;
@@ -28,6 +29,8 @@ import static android.view.View.VISIBLE;
 import static com.michaelqi.musicplayer.MainActivity.LOOP_ALL;
 import static com.michaelqi.musicplayer.MainActivity.LOOP_CURRENT;
 import static com.michaelqi.musicplayer.MainActivity.NO_LOOP;
+import static com.michaelqi.musicplayer.MainActivity.audioFocus;
+import static com.michaelqi.musicplayer.MainActivity.audioManager;
 import static com.michaelqi.musicplayer.MainActivity.gson;
 import static com.michaelqi.musicplayer.MainActivity.loop;
 import static com.michaelqi.musicplayer.MainActivity.nowPlayingPosition;
@@ -125,9 +128,17 @@ public class OnClickListener {
                     }
                     playing = nowPlaying.get(nowPlayingPosition).get(0);
                     mp = mp.create(activity, Uri.fromFile(new File(playing.getPath())));
-                    mp.start();
+                    audioFocus = audioFocus || audioManager.requestAudioFocus(new Utility.FocusListener(activity), AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN) == AudioManager.AUDIOFOCUS_REQUEST_GRANTED;
+                    if (audioFocus) {
+                        mp.start();
+                        ((ImageView) activity.findViewById(R.id.PlayPauseB)).setImageResource(R.drawable.pause);
+                        ((ImageView) activity.findViewById(R.id.PlayPause)).setImageResource(R.drawable.pause);
+                    } else {
+                        ((ImageView) activity.findViewById(R.id.PlayPauseB)).setImageResource(R.drawable.play);
+                        ((ImageView) activity.findViewById(R.id.PlayPause)).setImageResource(R.drawable.play);
+                    }
                     ((ViewPager) activity.findViewById(R.id.AlbumViewPager)).setCurrentItem(0);
-                    ((ViewPager) activity.findViewById(R.id.AlbumViewPager)).addOnPageChangeListener(new AlbumPageListener(activity));
+                    ((ViewPager) activity.findViewById(R.id.AlbumViewPager)).addOnPageChangeListener(new Utility.PageChangeListener(activity));
                 }
             }
         }
@@ -322,25 +333,21 @@ public class OnClickListener {
 
         @Override
         public void onClick(View view) {
-            playing = nowPlaying.get(nowPlayingPosition).get(playlistPosition.get(nowPlayingPosition));
+            activity.findViewById(R.id.AlbumIcon).setVisibility(VISIBLE);
+            activity.findViewById(R.id.BottomTitle).setVisibility(VISIBLE);
+            activity.findViewById(R.id.BottomArtist).setVisibility(VISIBLE);
+            activity.findViewById(R.id.PlayPauseB).setVisibility(VISIBLE);
+            activity.findViewById(R.id.ProgressBar).setVisibility(VISIBLE);
+
+            audioFocus = audioFocus || audioManager.requestAudioFocus(new Utility.FocusListener(activity), AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN) == AudioManager.AUDIOFOCUS_REQUEST_GRANTED;
             if (mp != null && mp.isPlaying()) {
                 mp.pause();
                 ((ImageView) activity.findViewById(R.id.PlayPauseB)).setImageResource(R.drawable.play);
                 ((ImageView) activity.findViewById(R.id.PlayPause)).setImageResource(R.drawable.play);
-                activity.findViewById(R.id.AlbumIcon).setVisibility(VISIBLE);
-                activity.findViewById(R.id.BottomTitle).setVisibility(VISIBLE);
-                activity.findViewById(R.id.BottomArtist).setVisibility(VISIBLE);
-                activity.findViewById(R.id.PlayPauseB).setVisibility(VISIBLE);
-                activity.findViewById(R.id.ProgressBar).setVisibility(VISIBLE);
-            } else {
+            } else if (audioFocus) {
                 mp.start();
                 ((ImageView) activity.findViewById(R.id.PlayPauseB)).setImageResource(R.drawable.pause);
                 ((ImageView) activity.findViewById(R.id.PlayPause)).setImageResource(R.drawable.pause);
-                activity.findViewById(R.id.AlbumIcon).setVisibility(VISIBLE);
-                activity.findViewById(R.id.BottomTitle).setVisibility(VISIBLE);
-                activity.findViewById(R.id.BottomArtist).setVisibility(VISIBLE);
-                activity.findViewById(R.id.PlayPauseB).setVisibility(VISIBLE);
-                activity.findViewById(R.id.ProgressBar).setVisibility(VISIBLE);
             }
         }
     }
@@ -414,7 +421,10 @@ public class OnClickListener {
             playlistPosition.set(nowPlayingPosition, 0);
             mp = mp.create(activity, Uri.fromFile(new File(playing.getPath())));
             mp.setOnCompletionListener(new Utility.SongCompletionListener(activity));
-            mp.start();
+            audioFocus = audioFocus || audioManager.requestAudioFocus(new Utility.FocusListener(activity), AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN) == AudioManager.AUDIOFOCUS_REQUEST_GRANTED;
+            if (audioFocus) {
+                mp.start();
+            }
             activity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -425,10 +435,10 @@ public class OnClickListener {
                         ((ImageView) activity.findViewById(R.id.ShufflePlaylist)).
                                 setColorFilter(activity.getResources().getColor(R.color.colorSecondaryDark));
                     }
-                    new AppRunnable.SetupSong(activity, true).run();
+                    new AppRunnable.SetupSong(activity, audioFocus).run();
                     ((SlidingUpPanelLayout) activity.findViewById(R.id.SlidingUpPanelLayout)).setTouchEnabled(true);
                     ((SlidingUpPanelLayout) activity.findViewById(R.id.SlidingUpPanelLayout)).setPanelState(SlidingUpPanelLayout.PanelState.EXPANDED);
-                    new AppRunnable.SetupBottom(activity, true).run();
+                    new AppRunnable.SetupBottom(activity, audioFocus).run();
                 }
             });
         }
@@ -461,7 +471,7 @@ public class OnClickListener {
             ((ViewPager) activity.findViewById(R.id.AlbumViewPager)).clearOnPageChangeListeners();
             ((ViewPager) activity.findViewById(R.id.AlbumViewPager)).setAdapter(new Adapter.AlbumImage(activity));
             ((ViewPager) activity.findViewById(R.id.AlbumViewPager)).setCurrentItem(playlistPosition.get(nowPlayingPosition));
-            ((ViewPager) activity.findViewById(R.id.AlbumViewPager)).addOnPageChangeListener(new AlbumPageListener(activity));
+            ((ViewPager) activity.findViewById(R.id.AlbumViewPager)).addOnPageChangeListener(new Utility.PageChangeListener(activity));
         }
     }
 
