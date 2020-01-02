@@ -120,7 +120,7 @@ public class OnClickListener {
                         ArrayList<Music> playlist = nowPlaying.get(nowPlayingPosition);
                         Music last = playlist.remove(playlist.size() - 1);
                         Collections.shuffle(playlist);;
-                        playlist.add((int) Math.random() * nowPlaying.size() + 1, last);
+                        playlist.add((int) (Math.random() * nowPlaying.size()) + 1, last);
                         ((ViewPager) activity.findViewById(R.id.AlbumViewPager)).setAdapter(new Adapter.AlbumImage(activity));
                     }
                     playing = nowPlaying.get(nowPlayingPosition).get(0);

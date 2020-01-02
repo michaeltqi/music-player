@@ -80,8 +80,7 @@ public class Adapter {
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.cell_album, parent, false);
-            AlbumViewHolder albumViewHolder = new AlbumViewHolder(view);
-            return albumViewHolder;
+            return new AlbumViewHolder(view);
         }
 
         @Override
@@ -321,8 +320,7 @@ public class Adapter {
                 return new HeaderViewHolder(header);
             }
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_song, parent, false);
-            SongViewHolder songViewHolder = new SongViewHolder(view);
-            return songViewHolder;
+            return new SongViewHolder(view);
         }
 
         @Override

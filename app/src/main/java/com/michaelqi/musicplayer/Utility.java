@@ -314,7 +314,7 @@ public class Utility {
                         if (shuffle) {
                             Music last = playlist.remove(playlist.size() - 1);
                             Collections.shuffle(playlist);;
-                            playlist.add((int) Math.random() * nowPlaying.size() + 1, last);
+                            playlist.add((int) (Math.random() * nowPlaying.size()) + 1, last);
                             activity.runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
