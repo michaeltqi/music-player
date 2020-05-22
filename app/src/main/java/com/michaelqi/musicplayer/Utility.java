@@ -60,7 +60,7 @@ public class Utility {
         int color;
         public AlbumGraphic(Activity activity, byte[] image) {
             if (image == null) {
-                this.bitmap = BitmapFactory.decodeResource(activity.getResources(), R.drawable.eighth2);
+                this.bitmap = BitmapFactory.decodeResource(activity.getResources(), R.drawable.eighth);
             } else {
                 this.bitmap = BitmapFactory.decodeByteArray(image, 0, image.length);
             }

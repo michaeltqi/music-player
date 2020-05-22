@@ -2,7 +2,6 @@ package com.michaelqi.musicplayer;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.MediaMetadataRetriever;
 import android.view.LayoutInflater;
@@ -16,7 +15,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
-import androidx.palette.graphics.Palette;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.PagerAdapter;
 
@@ -88,14 +86,13 @@ public class Adapter {
             View albumView = ((AlbumViewHolder) viewHolder).view;
             String album = albumList.get(position);
             ((TextView) albumView.findViewById(R.id.AlbumName)).setText(album);
-            if (!albumGraphics.containsKey(album)) {
-                mmr.setDataSource(albums.get(album).get(0).getPath());
-                byte[] image = mmr.getEmbeddedPicture();
-                albumGraphics.put(album, new Utility.AlbumGraphic(activity, image));
+            if (albumGraphics.containsKey(album)) {
+                Utility.AlbumGraphic albumGraphic = albumGraphics.get(album);
+                Glide.with(activity).load(albumGraphic.bitmap).into((ImageView) albumView.findViewById(R.id.AlbumImage));
+                albumView.findViewById(R.id.AlbumName).setBackgroundColor(albumGraphic.color);
+            } else {
+                new Thread(new AppRunnable.AlbumImage(activity, this, album, position)).start();
             }
-            Utility.AlbumGraphic albumGraphic = albumGraphics.get(album);
-            Glide.with(activity).load(albumGraphic.bitmap).into((ImageView) albumView.findViewById(R.id.AlbumImage));
-            albumView.findViewById(R.id.AlbumName).setBackgroundColor(albumGraphic.color);
             albumView.setOnClickListener(new OnClickListener.Album(activity, album));
         }
 
@@ -130,7 +127,7 @@ public class Adapter {
 
             View view = LayoutInflater.from(activity).inflate(R.layout.album_image, container, false);
             if (image == null) {
-                ((ImageView) view.findViewById(R.id.AlbumImage)).setImageResource(R.drawable.eighth2);
+                ((ImageView) view.findViewById(R.id.AlbumImage)).setImageResource(R.drawable.eighth);
             } else {
                 ((ImageView) view.findViewById(R.id.AlbumImage)).
                         setImageBitmap(BitmapFactory.decodeByteArray(image, 0, image.length));

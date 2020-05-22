@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import static android.view.View.VISIBLE;
+import static com.michaelqi.musicplayer.MainActivity.albumGraphics;
 import static com.michaelqi.musicplayer.MainActivity.albumList;
 import static com.michaelqi.musicplayer.MainActivity.albums;
 import static com.michaelqi.musicplayer.MainActivity.audioFocus;
@@ -35,7 +36,6 @@ import static com.michaelqi.musicplayer.MainActivity.audioManager;
 import static com.michaelqi.musicplayer.MainActivity.genres;
 import static com.michaelqi.musicplayer.MainActivity.gson;
 import static com.michaelqi.musicplayer.MainActivity.handler;
-import static com.michaelqi.musicplayer.MainActivity.loop;
 import static com.michaelqi.musicplayer.MainActivity.mmr;
 import static com.michaelqi.musicplayer.MainActivity.mp;
 import static com.michaelqi.musicplayer.MainActivity.nowPlaying;
@@ -70,6 +70,35 @@ public class AppRunnable {
                 @Override
                 public void run() {
                     ft.commit();
+                }
+            });
+        }
+    }
+
+    /* Retrieves album art and notifies adapter in album page of main view pager */
+    static class AlbumImage implements Runnable {
+        Activity activity;
+        Adapter.Album albumAdapter;
+        String album;
+        int position;
+
+        AlbumImage(Activity activity, Adapter.Album albumAdapter, String album, int position) {
+            this.activity = activity;
+            this.albumAdapter = albumAdapter;
+            this.album = album;
+            this.position = position;
+        }
+
+        @Override
+        public void run() {
+            MediaMetadataRetriever mmr = new MediaMetadataRetriever();
+            mmr.setDataSource(albums.get(album).get(0).getPath());
+            byte[] image = mmr.getEmbeddedPicture();
+            albumGraphics.put(album, new Utility.AlbumGraphic(activity, image));
+            activity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    albumAdapter.notifyItemChanged(position);
                 }
             });
         }
@@ -317,7 +346,7 @@ public class AppRunnable {
 
             byte[] icon = mmr.getEmbeddedPicture();
             if (icon == null) {
-                ((ImageView) activity.findViewById(R.id.AlbumIcon)).setImageResource(R.drawable.eighth2);
+                ((ImageView) activity.findViewById(R.id.AlbumIcon)).setImageResource(R.drawable.eighth);
             } else {
                 ((ImageView) activity.findViewById(R.id.AlbumIcon)).setImageBitmap(BitmapFactory.decodeByteArray(icon, 0, icon.length));
             }
@@ -400,7 +429,7 @@ public class AppRunnable {
 
             byte[] image = mmr.getEmbeddedPicture();
             if (image == null) {
-                ((ImageView) activity.findViewById(R.id.Background)).setImageResource(R.drawable.eighth2);
+                ((ImageView) activity.findViewById(R.id.Background)).setImageResource(R.drawable.eighth);
             } else {
                 ((ImageView) activity.findViewById(R.id.Background)).setImageBitmap(BitmapFactory.decodeByteArray(image, 0, image.length));
             }

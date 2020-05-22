@@ -6,15 +6,6 @@
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <TextView
-        android:id="@+id/AlbumName"
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        app:layout_constraintTop_toBottomOf="@id/AlbumImage"
-        android:textColor="@color/textPrimaryColor"
-        android:textSize="16sp"
-        android:gravity="center"/>
-
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -30,10 +21,21 @@
     <ImageView
         android:id="@+id/AlbumImage"
         android:contentDescription="@string/albumimage"
+        android:src="@drawable/eighth"
         android:background="@color/colorSecondaryDark"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintTop_toTopOf="parent"/>
+
+    <TextView
+        android:id="@+id/AlbumName"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:background="@color/textBackground"
+        app:layout_constraintTop_toBottomOf="@id/AlbumImage"
+        android:textColor="@color/textPrimaryColor"
+        android:textSize="16sp"
+        android:gravity="center"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

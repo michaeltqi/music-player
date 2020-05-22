@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -15,8 +14,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
-
-import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -42,7 +39,7 @@ public class Fragments {
             mmr.setDataSource(songs.get(0).getPath());
             byte[] image = mmr.getEmbeddedPicture();
             if (image == null) {
-                ((ImageView) header.findViewById(R.id.AlbumImage)).setImageResource(R.drawable.eighth2);
+                ((ImageView) header.findViewById(R.id.AlbumImage)).setImageResource(R.drawable.eighth);
             } else {
                 ((ImageView) header.findViewById(R.id.AlbumImage)).setImageBitmap(BitmapFactory.decodeByteArray(image, 0, image.length));
             }
