@@ -1,12 +1,15 @@
 package com.michaelqi.musicplayer;
 
-import android.content.IntentFilter;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
 import android.media.AudioManager;
 import android.media.MediaMetadataRetriever;
 import android.media.MediaPlayer;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Bundle;
+import android.support.v4.media.session.MediaSessionCompat;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
@@ -60,7 +63,8 @@ public class MainActivity extends AppCompatActivity {
     static ArrayList<Integer> playlistPosition = new ArrayList<>();
     static ArrayList<Integer> timestamp = new ArrayList<>();
 
-    /* Static variables for audio focus */
+    /* Static variables for media session */
+    static MediaSessionCompat mediaSessionCompat;
     static AudioManager audioManager;
     static boolean audioFocus;
 
@@ -114,7 +118,6 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
         });
-        registerReceiver(new Utility.NoisyReceiver(this), new IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY));
     }
 
     @Override

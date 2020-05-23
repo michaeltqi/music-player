@@ -120,11 +120,10 @@
 
         <ImageView
             android:id="@+id/PreviousTrack"
-            android:src="@drawable/skip"
+            android:src="@drawable/previous"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:contentDescription="@string/previoustrack"
-            android:scaleX="-1"
             android:tint="@color/textPrimaryColor"
             android:paddingLeft="5dp"
             android:paddingRight="5dp"

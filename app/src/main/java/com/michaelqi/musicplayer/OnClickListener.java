@@ -106,41 +106,7 @@ public class OnClickListener {
 
         @Override
         public void onClick(View view) {
-            int newPage = playlistPosition.get(nowPlayingPosition) + change;
-            if (newPage >= 0 && newPage < nowPlaying.size()) {
-                playlistPosition.set(nowPlayingPosition, newPage);
-                ((ViewPager) activity.findViewById(R.id.AlbumViewPager)).setCurrentItem(newPage, true);
-            } else if (newPage + change == nowPlaying.size()) {
-                if (loop == NO_LOOP) {
-
-                } else if (loop == LOOP_ALL) {
-                    if (mp != null && mp.isPlaying()) {
-                        mp.stop();
-                    }
-                    ((ViewPager) activity.findViewById(R.id.AlbumViewPager)).clearOnPageChangeListeners();
-                    playlistPosition.set(nowPlayingPosition, 0);
-                    if (shuffle) {
-                        ArrayList<Music> playlist = nowPlaying.get(nowPlayingPosition);
-                        Music last = playlist.remove(playlist.size() - 1);
-                        Collections.shuffle(playlist);;
-                        playlist.add((int) (Math.random() * nowPlaying.size()) + 1, last);
-                        ((ViewPager) activity.findViewById(R.id.AlbumViewPager)).setAdapter(new Adapter.AlbumImage(activity));
-                    }
-                    playing = nowPlaying.get(nowPlayingPosition).get(0);
-                    mp = mp.create(activity, Uri.fromFile(new File(playing.getPath())));
-                    audioFocus = audioFocus || audioManager.requestAudioFocus(new Utility.FocusListener(activity), AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN) == AudioManager.AUDIOFOCUS_REQUEST_GRANTED;
-                    if (audioFocus) {
-                        mp.start();
-                        ((ImageView) activity.findViewById(R.id.PlayPauseB)).setImageResource(R.drawable.pause);
-                        ((ImageView) activity.findViewById(R.id.PlayPause)).setImageResource(R.drawable.pause);
-                    } else {
-                        ((ImageView) activity.findViewById(R.id.PlayPauseB)).setImageResource(R.drawable.play);
-                        ((ImageView) activity.findViewById(R.id.PlayPause)).setImageResource(R.drawable.play);
-                    }
-                    ((ViewPager) activity.findViewById(R.id.AlbumViewPager)).setCurrentItem(0);
-                    ((ViewPager) activity.findViewById(R.id.AlbumViewPager)).addOnPageChangeListener(new Utility.PageChangeListener(activity));
-                }
-            }
+            Utility.changeTrack(activity, change);
         }
     }
 
@@ -333,22 +299,7 @@ public class OnClickListener {
 
         @Override
         public void onClick(View view) {
-            activity.findViewById(R.id.AlbumIcon).setVisibility(VISIBLE);
-            activity.findViewById(R.id.BottomTitle).setVisibility(VISIBLE);
-            activity.findViewById(R.id.BottomArtist).setVisibility(VISIBLE);
-            activity.findViewById(R.id.PlayPauseB).setVisibility(VISIBLE);
-            activity.findViewById(R.id.ProgressBar).setVisibility(VISIBLE);
-
-            audioFocus = audioFocus || audioManager.requestAudioFocus(new Utility.FocusListener(activity), AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN) == AudioManager.AUDIOFOCUS_REQUEST_GRANTED;
-            if (mp != null && mp.isPlaying()) {
-                mp.pause();
-                ((ImageView) activity.findViewById(R.id.PlayPauseB)).setImageResource(R.drawable.play);
-                ((ImageView) activity.findViewById(R.id.PlayPause)).setImageResource(R.drawable.play);
-            } else if (audioFocus) {
-                mp.start();
-                ((ImageView) activity.findViewById(R.id.PlayPauseB)).setImageResource(R.drawable.pause);
-                ((ImageView) activity.findViewById(R.id.PlayPause)).setImageResource(R.drawable.pause);
-            }
+            Utility.playPause(activity);
         }
     }
 
@@ -441,6 +392,7 @@ public class OnClickListener {
                     new AppRunnable.SetupBottom(activity, audioFocus).run();
                 }
             });
+            Utility.createNotification(activity);
         }
     }
 

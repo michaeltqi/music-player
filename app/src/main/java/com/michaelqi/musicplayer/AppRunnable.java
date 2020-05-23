@@ -224,6 +224,7 @@ public class AppRunnable {
                     new AppRunnable.SetupBottom(activity, audioFocus).run();
                 }
             });
+            Utility.createNotification(activity);
         }
     }
 
