@@ -21,6 +21,11 @@
             </intent-filter>
         </activity>
         <receiver android:name=".Utility$NotificationReceiver"/>
+        <service android:name=".Utility$MusicService">
+            <intent-filter>
+                <action android:name="android.media.browse.MediaBrowserService"/>
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>

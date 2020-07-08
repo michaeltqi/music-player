@@ -331,10 +331,9 @@ public class Adapter {
 
                 ((TextView) songView.findViewById(R.id.Title)).setText(title);
                 ((TextView) songView.findViewById(R.id.Artist)).setText(artist + " (" + duration + ")");
-                if (song.equals(playing)) {
-                    ((TextView) songView.findViewById(R.id.Title)).setTextColor(activity.getResources().getColor(R.color.colorPrimary));
-                    ((TextView) songView.findViewById(R.id.Artist)).setTextColor(activity.getResources().getColor(R.color.colorPrimary));
-                }
+                int colorID = song.equals(playing) ? R.color.colorPrimary: R.color.textPrimaryColor;
+                ((TextView) songView.findViewById(R.id.Title)).setTextColor(activity.getResources().getColor(colorID));
+                ((TextView) songView.findViewById(R.id.Artist)).setTextColor(activity.getResources().getColor(colorID));
 
                 songView.setOnClickListener(new OnClickListener.PlaySong(activity, songs, position - headerOffset, multiple));
                 songView.findViewById(R.id.SongDropdown).setOnClickListener(new OnClickListener.SongMenu(activity, fragmentManager, song));

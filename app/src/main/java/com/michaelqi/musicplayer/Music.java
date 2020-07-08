@@ -1,5 +1,8 @@
 package com.michaelqi.musicplayer;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
@@ -8,7 +11,19 @@ import java.util.Comparator;
 
 /* Music object abstraction */
 @Entity(tableName = "Music")
-public class Music {
+public class Music implements Parcelable {
+    Music() {}
+
+    Music(Parcel parcel) {
+        path = parcel.readString();
+        title = parcel.readString();
+        artist = parcel.readString();
+        album = parcel.readString();
+        int num = parcel.readInt();
+        number = num >= 0 ? num : null;
+        genre = parcel.readString();
+        duration = parcel.readString();
+    }
 
     @PrimaryKey
     @NonNull
@@ -109,5 +124,33 @@ public class Music {
         public int compare(String s1, String s2) {
             return ignoreCharacters(s1).compareTo(ignoreCharacters(s2));
         }
+    }
+
+    public static final Parcelable.Creator<Music> CREATOR = new Parcelable.Creator<Music>() {
+        @Override
+        public Music createFromParcel(Parcel in) {
+            return new Music(in);
+        }
+
+        @Override
+        public Music[] newArray(int size) {
+            return new Music[size];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel out, int flags) {
+        out.writeString(path);
+        out.writeString(title);
+        out.writeString(artist);
+        out.writeString(album);
+        out.writeInt(number == null ? -1 : number);
+        out.writeString(genre);
+        out.writeString(duration);
     }
 }

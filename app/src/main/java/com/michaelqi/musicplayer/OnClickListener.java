@@ -5,42 +5,26 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
-import android.media.AudioManager;
-import android.net.Uri;
+import android.os.Bundle;
+import android.support.v4.media.session.MediaControllerCompat;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.appcompat.widget.PopupMenu;
 import androidx.fragment.app.FragmentManager;
-import androidx.viewpager.widget.ViewPager;
 
-import com.sothree.slidinguppanel.SlidingUpPanelLayout;
-
-import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
-import static android.view.View.VISIBLE;
-import static com.michaelqi.musicplayer.MainActivity.LOOP_ALL;
-import static com.michaelqi.musicplayer.MainActivity.LOOP_CURRENT;
-import static com.michaelqi.musicplayer.MainActivity.NO_LOOP;
-import static com.michaelqi.musicplayer.MainActivity.audioFocus;
-import static com.michaelqi.musicplayer.MainActivity.audioManager;
+//import static com.michaelqi.musicplayer.MainActivity.audioFocus;
 import static com.michaelqi.musicplayer.MainActivity.gson;
 import static com.michaelqi.musicplayer.MainActivity.loop;
 import static com.michaelqi.musicplayer.MainActivity.nowPlayingPosition;
-import static com.michaelqi.musicplayer.MainActivity.original;
-import static com.michaelqi.musicplayer.MainActivity.playlistPosition;
-import static com.michaelqi.musicplayer.MainActivity.mp;
 import static com.michaelqi.musicplayer.MainActivity.nowPlaying;
-import static com.michaelqi.musicplayer.MainActivity.playing;
 import static com.michaelqi.musicplayer.MainActivity.playlists;
-import static com.michaelqi.musicplayer.MainActivity.shuffle;
 
 public class OnClickListener {
 
@@ -91,22 +75,6 @@ public class OnClickListener {
                     new AppRunnable.AddBodyFragment(activity, album).run();
                 }
             }).start();
-        }
-    }
-
-    /* Manages the previous and next buttons */
-    static class ChangeTrack implements View.OnClickListener {
-        Activity activity;
-        int change;
-
-        ChangeTrack(Activity activity, int change) {
-            this.activity = activity;
-            this.change = change;
-        }
-
-        @Override
-        public void onClick(View view) {
-            Utility.changeTrack(activity, change);
         }
     }
 
@@ -165,35 +133,7 @@ public class OnClickListener {
 
         @Override
         public void onClick(View view) {
-            loop = (loop + 1) % 3;
-            if (loop == NO_LOOP) {
-                activity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        ((ImageView) activity.findViewById(R.id.LoopPlaylist)).setImageResource(R.drawable.loop);
-                        ((ImageView) activity.findViewById(R.id.LoopPlaylist)).
-                                setColorFilter(activity.getResources().getColor(R.color.colorSecondaryDark));
-                    }
-                });
-            } else if (loop == LOOP_ALL) {
-                activity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        ((ImageView) activity.findViewById(R.id.LoopPlaylist)).setImageResource(R.drawable.loopall);
-                        ((ImageView) activity.findViewById(R.id.LoopPlaylist)).
-                                setColorFilter(activity.getResources().getColor(R.color.textPrimaryColor));
-                    }
-                });
-            } else if (loop == LOOP_CURRENT) {
-                activity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        ((ImageView) activity.findViewById(R.id.LoopPlaylist)).setImageResource(R.drawable.loopcurrent);
-                        ((ImageView) activity.findViewById(R.id.LoopPlaylist)).
-                                setColorFilter(activity.getResources().getColor(R.color.textPrimaryColor));
-                    }
-                });
-            }
+            MediaControllerCompat.getMediaController(activity).getTransportControls().sendCustomAction("loop", null);
         }
     }
 
@@ -218,6 +158,20 @@ public class OnClickListener {
                 }
             });
             popup.show();
+        }
+    }
+
+    /* Manages the next button */
+    static class NextTrack implements View.OnClickListener {
+        Activity activity;
+
+        NextTrack(Activity activity) {
+            this.activity = activity;
+        }
+
+        @Override
+        public void onClick(View view) {
+            MediaControllerCompat.getMediaController(activity).getTransportControls().skipToNext();
         }
     }
 
@@ -299,7 +253,10 @@ public class OnClickListener {
 
         @Override
         public void onClick(View view) {
-            Utility.playPause(activity);
+            //audioFocus = audioFocus || audioManager.requestAudioFocus(new FocusListener(activity), AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN) == AudioManager.AUDIOFOCUS_REQUEST_GRANTED;
+            MediaControllerCompat mediaController = MediaControllerCompat.getMediaController(activity);
+            mediaController.getTransportControls().sendCustomAction("playpause", null);
+            //createNotification(activity);
         }
     }
 
@@ -325,74 +282,65 @@ public class OnClickListener {
     /* Manages selecting a song */
     static class PlaySong implements View.OnClickListener {
         Activity activity;
-        List<Music> songs;
+        ArrayList<Music> songs;
         int position;
         boolean multiple;
 
         PlaySong(Activity activity, List<Music> songs, int position, boolean multiple) {
             this.activity = activity;
-            this.songs = songs;
+            this.songs = new ArrayList<>(songs);
             this.position = position;
             this.multiple = multiple;
         }
 
         @Override
         public void onClick(View view) {
-            new Thread(new AppRunnable.PlaySong(activity, songs, position, multiple)).start();
+            //audioFocus = audioFocus || audioManager.requestAudioFocus(new Utility.FocusListener(activity), AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN) == AudioManager.AUDIOFOCUS_REQUEST_GRANTED;
+            Bundle bundle = new Bundle();
+            bundle.putParcelable("song", songs.get(position));
+            bundle.putParcelableArrayList("songs", this.songs);
+            bundle.putInt("position", position);
+            bundle.putBoolean("multiple", multiple);
+            bundle.putBoolean("expand", true);
+            MediaControllerCompat.getMediaController(activity).getTransportControls().sendCustomAction("playsong", bundle);
+//            Utility.createNotification(activity);
         }
     }
 
     /* Manages pressing the play or shuffle buttons at the top of album, genre, and playlist fragments */
     static class PlaySongList implements View.OnClickListener {
         Activity activity;
-        List<Music> songs;
+        ArrayList<Music> songs;
         boolean shuffle;
 
         PlaySongList(Activity activity, List<Music> songs, boolean shuffle, boolean nowplaying) {
             this.activity = activity;
-            this.songs = nowplaying ? nowPlaying.get(nowPlayingPosition) : songs;
+            this.songs = nowplaying ? new ArrayList<>(nowPlaying.get(nowPlayingPosition)) : new ArrayList<>(songs);
             this.shuffle = shuffle;
         }
 
         @Override
         public void onClick(View view) {
-            if (mp.isPlaying()) {
-                mp.stop();
-            }
+            Bundle bundle = new Bundle();
+            bundle.putParcelableArrayList("songs", songs);
+            bundle.putBoolean("shuffle", shuffle);
+            bundle.putString("update", "true");
+            MediaControllerCompat.getMediaController(activity).getTransportControls().sendCustomAction("playsonglist", bundle);
+//            Utility.createNotification(activity);
+        }
+    }
 
-            MainActivity.shuffle = shuffle;
+    /* Manages the previous button */
+    static class PreviousTrack implements View.OnClickListener {
+        Activity activity;
 
-            original.set(nowPlayingPosition, songs);
-            nowPlaying.set(nowPlayingPosition, new ArrayList<>(songs));
+        PreviousTrack(Activity activity) {
+            this.activity = activity;
+        }
 
-            if (shuffle) {
-                Collections.shuffle(nowPlaying.get(nowPlayingPosition));
-            }
-            playing = nowPlaying.get(nowPlayingPosition).get(0);
-            playlistPosition.set(nowPlayingPosition, 0);
-            mp = mp.create(activity, Uri.fromFile(new File(playing.getPath())));
-            mp.setOnCompletionListener(new Utility.SongCompletionListener(activity));
-            audioFocus = audioFocus || audioManager.requestAudioFocus(new Utility.FocusListener(activity), AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN) == AudioManager.AUDIOFOCUS_REQUEST_GRANTED;
-            if (audioFocus) {
-                mp.start();
-            }
-            activity.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    if (shuffle) {
-                        ((ImageView) activity.findViewById(R.id.ShufflePlaylist)).
-                                setColorFilter(activity.getResources().getColor(R.color.textPrimaryColor));
-                    } else {
-                        ((ImageView) activity.findViewById(R.id.ShufflePlaylist)).
-                                setColorFilter(activity.getResources().getColor(R.color.colorSecondaryDark));
-                    }
-                    new AppRunnable.SetupSong(activity, audioFocus).run();
-                    ((SlidingUpPanelLayout) activity.findViewById(R.id.SlidingUpPanelLayout)).setTouchEnabled(true);
-                    ((SlidingUpPanelLayout) activity.findViewById(R.id.SlidingUpPanelLayout)).setPanelState(SlidingUpPanelLayout.PanelState.EXPANDED);
-                    new AppRunnable.SetupBottom(activity, audioFocus).run();
-                }
-            });
-            Utility.createNotification(activity);
+        @Override
+        public void onClick(View view) {
+            MediaControllerCompat.getMediaController(activity).getTransportControls().skipToPrevious();
         }
     }
 
@@ -406,24 +354,7 @@ public class OnClickListener {
 
         @Override
         public void onClick(View view) {
-            shuffle = !shuffle;
-            if (shuffle) {
-                ((ImageView) activity.findViewById(R.id.ShufflePlaylist)).
-                        setColorFilter(activity.getResources().getColor(R.color.textPrimaryColor));
-                Music current = nowPlaying.get(nowPlayingPosition).remove((int) playlistPosition.get(nowPlayingPosition));
-                Collections.shuffle(nowPlaying.get(nowPlayingPosition));
-                nowPlaying.get(nowPlayingPosition).add(0, current);
-                playlistPosition.set(nowPlayingPosition, 0);
-            } else {
-                ((ImageView) activity.findViewById(R.id.ShufflePlaylist)).
-                        setColorFilter(activity.getResources().getColor(R.color.colorSecondaryDark));
-                nowPlaying.set(nowPlayingPosition, new ArrayList<>(original.get(nowPlayingPosition)));
-                playlistPosition.set(nowPlayingPosition, original.get(nowPlayingPosition).indexOf(playing));
-            }
-            ((ViewPager) activity.findViewById(R.id.AlbumViewPager)).clearOnPageChangeListeners();
-            ((ViewPager) activity.findViewById(R.id.AlbumViewPager)).setAdapter(new Adapter.AlbumImage(activity));
-            ((ViewPager) activity.findViewById(R.id.AlbumViewPager)).setCurrentItem(playlistPosition.get(nowPlayingPosition));
-            ((ViewPager) activity.findViewById(R.id.AlbumViewPager)).addOnPageChangeListener(new Utility.PageChangeListener(activity));
+            MediaControllerCompat.getMediaController(activity).getTransportControls().sendCustomAction("shuffle", null);
         }
     }
 
