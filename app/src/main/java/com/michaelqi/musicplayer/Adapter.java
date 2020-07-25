@@ -18,14 +18,11 @@ import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.PagerAdapter;
 
-import com.bumptech.glide.Glide;
-
 import java.util.ArrayList;
 import java.util.List;
 
 import static com.michaelqi.musicplayer.MainActivity.albumGraphics;
 import static com.michaelqi.musicplayer.MainActivity.albumList;
-import static com.michaelqi.musicplayer.MainActivity.albums;
 import static com.michaelqi.musicplayer.MainActivity.mmr;
 import static com.michaelqi.musicplayer.MainActivity.nowPlaying;
 import static com.michaelqi.musicplayer.MainActivity.nowPlayingPosition;
@@ -88,7 +85,7 @@ public class Adapter {
             ((TextView) albumView.findViewById(R.id.AlbumName)).setText(album);
             if (albumGraphics.containsKey(album)) {
                 Utility.AlbumGraphic albumGraphic = albumGraphics.get(album);
-                Glide.with(activity).load(albumGraphic.bitmap).into((ImageView) albumView.findViewById(R.id.AlbumImage));
+                ((ImageView) albumView.findViewById(R.id.AlbumImage)).setImageBitmap(albumGraphic.bitmap);
                 albumView.findViewById(R.id.AlbumName).setBackgroundColor(albumGraphic.color);
             } else {
                 new Thread(new AppRunnable.AlbumImage(activity, this, album, position)).start();

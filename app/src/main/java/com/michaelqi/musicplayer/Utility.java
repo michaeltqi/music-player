@@ -458,6 +458,7 @@ public class Utility {
                     onStop();
                 }
                 if (playing == null) {
+                    mediaBuilder.putString("update", "false");
                     mediaSession.setMetadata(mediaBuilder.build());
                     return;
                 }

@@ -216,23 +216,13 @@ public class MainActivity extends AppCompatActivity {
     void setupScreen() {
         if (playing == null) {
             ((SlidingUpPanelLayout) findViewById(R.id.SlidingUpPanelLayout)).setTouchEnabled(false);
+        } else {
+            findViewById(R.id.AlbumIcon).setVisibility(VISIBLE);
+            findViewById(R.id.BottomTitle).setVisibility(VISIBLE);
+            findViewById(R.id.BottomArtist).setVisibility(VISIBLE);
+            findViewById(R.id.PlayPauseB).setVisibility(VISIBLE);
+            findViewById(R.id.ProgressBar).setVisibility(VISIBLE);
         }
-//        if (playing == null) {
-//            ((SlidingUpPanelLayout) findViewById(R.id.SlidingUpPanelLayout)).setTouchEnabled(false);
-//        } else {
-//            mmr.setDataSource(playing.getPath());
-//            String title = playing.getTitle();
-//            String artist = playing.getArtist();
-//            Bitmap art;
-//            byte[] image = mmr.getEmbeddedPicture();
-//            if (image == null) {
-//                art = BitmapFactory.decodeResource(getApplicationContext().getResources(), R.drawable.eighth);
-//            } else {
-//                art = BitmapFactory.decodeByteArray(image, 0, image.length);
-//            }
-//            long duration = Long.parseLong(playing.getDuration());
-//            setupSong(title, artist, art, duration);
-//        }
 
         ((ViewPager) findViewById(R.id.ViewPager)).setAdapter(new Adapter.MusicPager(getSupportFragmentManager()));
         ((TabLayout) findViewById(R.id.TabLayout)).setupWithViewPager((ViewPager) findViewById(R.id.ViewPager));
@@ -261,12 +251,6 @@ public class MainActivity extends AppCompatActivity {
             ((ImageView) findViewById(R.id.LoopPlaylist)).
                     setColorFilter(getResources().getColor(R.color.colorSecondaryDark));
         }
-
-        findViewById(R.id.AlbumIcon).setVisibility(VISIBLE);
-        findViewById(R.id.BottomTitle).setVisibility(VISIBLE);
-        findViewById(R.id.BottomArtist).setVisibility(VISIBLE);
-        findViewById(R.id.PlayPauseB).setVisibility(VISIBLE);
-        findViewById(R.id.ProgressBar).setVisibility(VISIBLE);
 
         OnClickListener.PlayPause playPauseListener = new OnClickListener.PlayPause(this);
         findViewById(R.id.MainMenu).setOnClickListener(new OnClickListener.MainMenu(this));
