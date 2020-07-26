@@ -78,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
     static ArrayList<Integer> timestamp = new ArrayList<>();
 
     ViewPager.SimpleOnPageChangeListener changeListener = new Utility.PageChangeListener(this);
-    int icon = R.drawable.play;
+    boolean started = false;
 
     /* Static variables for media session */
     static MediaBrowserCompat mediaBrowser;
@@ -175,7 +175,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onResume() {
-//        ((ViewPager) findViewById(R.id.ViewPager)).getAdapter().notifyDataSetChanged();
+        ((ViewPager) findViewById(R.id.ViewPager)).getAdapter().notifyDataSetChanged();
         super.onResume();
     }
 
@@ -201,14 +201,18 @@ public class MainActivity extends AppCompatActivity {
 
     void setupMedia() {
         try {
-            MediaSessionCompat.Token token = mediaBrowser.getSessionToken();
-            MediaControllerCompat mediaController = new MediaControllerCompat(this, token);
-            MediaControllerCompat.setMediaController(MainActivity.this, mediaController);
-            mediaController.getTransportControls().prepare();
-            if (timestamp.get(nowPlayingPosition) >= 0) {
-                mediaController.getTransportControls().seekTo(timestamp.get(nowPlayingPosition));
-            }
-            mediaController.registerCallback(controllerCallback);
+                if (!started) {
+                    MediaSessionCompat.Token token = mediaBrowser.getSessionToken();
+                    MediaControllerCompat mediaController = new MediaControllerCompat(this, token);
+                    MediaControllerCompat.setMediaController(MainActivity.this, mediaController);
+                    mediaController.getTransportControls().prepare();
+                    if (timestamp.get(nowPlayingPosition) >= 0) {
+                        mediaController.getTransportControls().seekTo(timestamp.get(nowPlayingPosition));
+                    }
+                } else {
+                    MediaControllerCompat.getMediaController(MainActivity.this).getTransportControls().sendCustomAction("resume", null);
+                }
+            MediaControllerCompat.getMediaController(MainActivity.this).registerCallback(controllerCallback);
         } catch (RemoteException e) {}
     }
 
@@ -269,6 +273,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     void setupSong(String title, String artist, Bitmap art, long duration) {
+        int icon = started ? R.drawable.pause : R.drawable.play;
         ((ImageView) findViewById(R.id.PlayPause)).setImageResource(icon);
         ((ImageView) findViewById(R.id.PlayPauseB)).setImageResource(icon);
 
@@ -329,7 +334,8 @@ public class MainActivity extends AppCompatActivity {
                 handler.postDelayed(this, 1000);
             }
         });
-        icon = R.drawable.pause;
+//        icon = R.drawable.pause;
+        started = true;
     }
 
     /* Manages saving data upon ending fragment */

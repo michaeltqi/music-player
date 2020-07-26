@@ -284,6 +284,7 @@ public class Utility {
         MediaSessionCompat mediaSession;
         PlaybackStateCompat.Builder playbackBuilder;
         MediaMetadataCompat.Builder mediaBuilder;
+        String updateOnResume = "false";
         MediaSessionCompat.Callback mediaCallback = new MediaSessionCompat.Callback() {
             @Override
             public void onCustomAction(String action, Bundle extras) {
@@ -309,6 +310,9 @@ public class Utility {
                         break;
                     case "shuffle":
                         shuffle();
+                        break;
+                    case "resume":
+                        buildMedia(updateOnResume);
                         break;
                 }
             }
@@ -530,6 +534,7 @@ public class Utility {
                     }
                     Bundle bundle = new Bundle();
                     bundle.putString("update", update);
+                    updateOnResume = update;
                     mediaCallback.onCustomAction("prepare", bundle);
                     mediaCallback.onPlay();
                 }
