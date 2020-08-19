@@ -298,7 +298,7 @@ public class OnClickListener {
             //audioFocus = audioFocus || audioManager.requestAudioFocus(new Utility.FocusListener(activity), AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN) == AudioManager.AUDIOFOCUS_REQUEST_GRANTED;
             Bundle bundle = new Bundle();
             bundle.putParcelable("song", songs.get(position));
-            bundle.putParcelableArrayList("songs", this.songs);
+            bundle.putParcelableArrayList("songs", songs);
             bundle.putInt("position", position);
             bundle.putBoolean("multiple", multiple);
             bundle.putBoolean("expand", true);
@@ -325,6 +325,7 @@ public class OnClickListener {
             bundle.putParcelableArrayList("songs", songs);
             bundle.putBoolean("shuffle", shuffle);
             bundle.putString("update", "true");
+            bundle.putBoolean("expand", true);
             MediaControllerCompat.getMediaController(activity).getTransportControls().sendCustomAction("playsonglist", bundle);
 //            Utility.createNotification(activity);
         }

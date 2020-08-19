@@ -13,6 +13,7 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.AudioManager;
+import android.media.MediaMetadataRetriever;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Build;
@@ -53,6 +54,7 @@ import static android.view.View.VISIBLE;
 import static com.michaelqi.musicplayer.MainActivity.LOOP_ALL;
 import static com.michaelqi.musicplayer.MainActivity.LOOP_CURRENT;
 import static com.michaelqi.musicplayer.MainActivity.NO_LOOP;
+import static com.michaelqi.musicplayer.MainActivity.albumGraphics;
 import static com.michaelqi.musicplayer.MainActivity.albumList;
 import static com.michaelqi.musicplayer.MainActivity.albums;
 //import static com.michaelqi.musicplayer.MainActivity.audioFocus;
@@ -190,7 +192,7 @@ public class Utility {
     }
 
     /* Initializes all static values in the app */
-    static void initializeValues(Activity activity) {
+    static void initializeValues(final Activity activity) {
         AppDataBase database = Room.databaseBuilder(activity, AppDataBase.class, "Music")
                 .allowMainThreadQueries()
                 .build();
@@ -214,6 +216,18 @@ public class Utility {
 
         albumList = new ArrayList<>(albums.keySet());
         Collections.sort(albumList, new Music.StringComparator());
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                MediaMetadataRetriever mmr = new MediaMetadataRetriever();
+                for (String album: albumList) {
+                    mmr.setDataSource(albums.get(album).get(0).getPath());
+                    byte[] image = mmr.getEmbeddedPicture();
+                    albumGraphics.put(album, new Utility.AlbumGraphic(activity, image));
+                }
+            }
+        }).start();
 
         handler = new Handler(Looper.getMainLooper());
         SharedPreferences sharedPreferences = activity.getPreferences(Context.MODE_PRIVATE);
@@ -317,53 +331,63 @@ public class Utility {
                 }
             }
 
-            public void playSong(Bundle extras) {
-                Music song = extras.getParcelable("song");
-                if (!song.equals(playing)) {
-                    playing = extras.getParcelable("song");
-                    ArrayList<Music> songs = extras.getParcelableArrayList("songs");
-                    int position = extras.getInt("position");
-                    boolean multiple = extras.getBoolean("multiple");
+            public void playSong(final Bundle extras) {
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Music song = extras.getParcelable("song");
+                        if (!song.equals(playing)) {
+                            playing = extras.getParcelable("song");
+                            ArrayList<Music> songs = extras.getParcelableArrayList("songs");
+                            int position = extras.getInt("position");
+                            boolean multiple = extras.getBoolean("multiple");
 
-                    if (multiple) {
-                        original.set(nowPlayingPosition, songs);
-                        nowPlaying.set(nowPlayingPosition, new ArrayList<>(original.get(nowPlayingPosition)));
-                        if (shuffle) {
-                            nowPlaying.get(nowPlayingPosition).remove(position);
-                            Collections.shuffle(nowPlaying.get(nowPlayingPosition));
-                            nowPlaying.get(nowPlayingPosition).add(0, playing);
-                            playlistPosition.set(nowPlayingPosition, 0);
-                        } else {
-                            playlistPosition.set(nowPlayingPosition, position);
+                            if (multiple) {
+                                original.set(nowPlayingPosition, songs);
+                                nowPlaying.set(nowPlayingPosition, new ArrayList<>(original.get(nowPlayingPosition)));
+                                if (shuffle) {
+                                    nowPlaying.get(nowPlayingPosition).remove(position);
+                                    Collections.shuffle(nowPlaying.get(nowPlayingPosition));
+                                    nowPlaying.get(nowPlayingPosition).add(0, playing);
+                                    playlistPosition.set(nowPlayingPosition, 0);
+                                } else {
+                                    playlistPosition.set(nowPlayingPosition, position);
+                                }
+                            } else {
+                                List<Music> single = Collections.singletonList(playing);
+                                original.set(nowPlayingPosition, single);
+                                nowPlaying.set(nowPlayingPosition, single);
+                                playlistPosition.set(nowPlayingPosition, 0);
+                            }
+                            onPrepare("true");
                         }
-                    } else {
-                        List<Music> single = Collections.singletonList(playing);
-                        original.set(nowPlayingPosition, single);
-                        nowPlaying.set(nowPlayingPosition, single);
-                        playlistPosition.set(nowPlayingPosition, 0);
+                        playbackBuilder.setExtras(extras);
+                        onPlay();
                     }
-                    onPrepare("true");
-                }
-                playbackBuilder.setExtras(extras);
-                onPlay();
+                }).start();
             }
 
-            public void playSongList(Bundle extras) {
-                ArrayList<Music> songs = extras.getParcelableArrayList("songs");
-                shuffle = extras.getBoolean("shuffle");
+            public void playSongList(final Bundle extras) {
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        ArrayList<Music> songs = extras.getParcelableArrayList("songs");
+                        shuffle = extras.getBoolean("shuffle");
 
-                original.set(nowPlayingPosition, songs);
-                nowPlaying.set(nowPlayingPosition, new ArrayList<>(songs));
+                        original.set(nowPlayingPosition, songs);
+                        nowPlaying.set(nowPlayingPosition, new ArrayList<>(songs));
 
-                if (shuffle) {
-                    Collections.shuffle(nowPlaying.get(nowPlayingPosition));
-                }
-                playing = nowPlaying.get(nowPlayingPosition).get(0);
-                playlistPosition.set(nowPlayingPosition, 0);
+                        if (shuffle) {
+                            Collections.shuffle(nowPlaying.get(nowPlayingPosition));
+                        }
+                        playing = nowPlaying.get(nowPlayingPosition).get(0);
+                        playlistPosition.set(nowPlayingPosition, 0);
 
-                onPrepare("true");
-                playbackBuilder.setExtras(extras);
-                onPlay();
+                        onPrepare("true");
+                        playbackBuilder.setExtras(extras);
+                        onPlay();
+                    }
+                }).start();
             }
 
             @Override
