@@ -19,9 +19,7 @@ import androidx.fragment.app.FragmentManager;
 import java.util.ArrayList;
 import java.util.List;
 
-//import static com.michaelqi.musicplayer.MainActivity.audioFocus;
 import static com.michaelqi.musicplayer.MainActivity.gson;
-import static com.michaelqi.musicplayer.MainActivity.loop;
 import static com.michaelqi.musicplayer.MainActivity.nowPlayingPosition;
 import static com.michaelqi.musicplayer.MainActivity.nowPlaying;
 import static com.michaelqi.musicplayer.MainActivity.playlists;
@@ -253,7 +251,6 @@ public class OnClickListener {
 
         @Override
         public void onClick(View view) {
-            //audioFocus = audioFocus || audioManager.requestAudioFocus(new FocusListener(activity), AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN) == AudioManager.AUDIOFOCUS_REQUEST_GRANTED;
             MediaControllerCompat mediaController = MediaControllerCompat.getMediaController(activity);
             mediaController.getTransportControls().sendCustomAction("playpause", null);
             //createNotification(activity);
@@ -295,7 +292,6 @@ public class OnClickListener {
 
         @Override
         public void onClick(View view) {
-            //audioFocus = audioFocus || audioManager.requestAudioFocus(new Utility.FocusListener(activity), AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN) == AudioManager.AUDIOFOCUS_REQUEST_GRANTED;
             Bundle bundle = new Bundle();
             bundle.putParcelable("song", songs.get(position));
             bundle.putParcelableArrayList("songs", songs);

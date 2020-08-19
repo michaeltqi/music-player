@@ -4,12 +4,9 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.PorterDuff;
-import android.media.AudioManager;
 import android.media.MediaMetadataRetriever;
 import android.media.MediaPlayer;
-import android.net.Uri;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Bundle;
@@ -152,10 +149,6 @@ public class MainActivity extends AppCompatActivity {
             ((ViewPager) findViewById(R.id.ViewPager)).getAdapter().notifyDataSetChanged();
         }
     };
-
-
-    static AudioManager audioManager;
-//    static boolean audioFocus;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -334,7 +327,6 @@ public class MainActivity extends AppCompatActivity {
                 handler.postDelayed(this, 1000);
             }
         });
-//        icon = R.drawable.pause;
         started = true;
     }
 

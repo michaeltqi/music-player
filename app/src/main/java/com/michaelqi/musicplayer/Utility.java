@@ -57,8 +57,6 @@ import static com.michaelqi.musicplayer.MainActivity.NO_LOOP;
 import static com.michaelqi.musicplayer.MainActivity.albumGraphics;
 import static com.michaelqi.musicplayer.MainActivity.albumList;
 import static com.michaelqi.musicplayer.MainActivity.albums;
-//import static com.michaelqi.musicplayer.MainActivity.audioFocus;
-import static com.michaelqi.musicplayer.MainActivity.audioManager;
 import static com.michaelqi.musicplayer.MainActivity.genres;
 import static com.michaelqi.musicplayer.MainActivity.gson;
 import static com.michaelqi.musicplayer.MainActivity.handler;
@@ -152,34 +150,6 @@ public class Utility {
         }
     }
 
-    /* Listener for audio focus changes */
-    public static class FocusListener implements AudioManager.OnAudioFocusChangeListener {
-        Activity activity;
-
-        FocusListener(Activity activity) {
-            this.activity = activity;
-        }
-
-        @Override
-        public void onAudioFocusChange(int focusChange) {
-            if (focusChange == AudioManager.AUDIOFOCUS_GAIN) {
-//                audioFocus = true;
-                if (mp != null) {
-                    MediaControllerCompat.getMediaController(activity).getTransportControls().play();
-                    ((ImageView) activity.findViewById(R.id.PlayPauseB)).setImageResource(R.drawable.pause);
-                    ((ImageView) activity.findViewById(R.id.PlayPause)).setImageResource(R.drawable.pause);
-                }
-            } else if (focusChange == AudioManager.AUDIOFOCUS_LOSS || focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT) {
-//                audioFocus = false;
-                if (mp != null && mp.isPlaying()) {
-                    MediaControllerCompat.getMediaController(activity).getTransportControls().pause();
-                    ((ImageView) activity.findViewById(R.id.PlayPauseB)).setImageResource(R.drawable.play);
-                    ((ImageView) activity.findViewById(R.id.PlayPause)).setImageResource(R.drawable.play);
-                }
-            }
-        }
-    }
-
     /* Standardizes song duration format */
     static String formatDuration(long duration) {
         long hour = duration / 3600;
@@ -265,7 +235,6 @@ public class Utility {
         shuffle = sharedPreferences.getBoolean("Shuffle", false);
         loop = sharedPreferences.getInt("Loop", 0);
 
-        audioManager = (AudioManager) activity.getSystemService(Context.AUDIO_SERVICE);
         activity.registerReceiver(new NoisyReceiver(activity), new IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY));
         createNotificationChannel(activity);
         BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
@@ -298,6 +267,8 @@ public class Utility {
         MediaSessionCompat mediaSession;
         PlaybackStateCompat.Builder playbackBuilder;
         MediaMetadataCompat.Builder mediaBuilder;
+        AudioManager audioManager;
+        boolean audioFocus = false;
         String updateOnResume = "false";
         MediaSessionCompat.Callback mediaCallback = new MediaSessionCompat.Callback() {
             @Override
@@ -327,6 +298,14 @@ public class Utility {
                         break;
                     case "resume":
                         buildMedia(updateOnResume);
+                        if (mp.isPlaying()) {
+                            playbackBuilder.setState(PlaybackStateCompat.STATE_PLAYING, -1, 0);
+                            playbackBuilder.setActions(PlaybackStateCompat.ACTION_PLAY_PAUSE | PlaybackStateCompat.ACTION_PAUSE);
+                        } else {
+                            playbackBuilder.setState(PlaybackStateCompat.STATE_PAUSED, -1, 0);
+                            playbackBuilder.setActions(PlaybackStateCompat.ACTION_PLAY_PAUSE | PlaybackStateCompat.ACTION_PLAY);
+                        }
+                        mediaSession.setPlaybackState(playbackBuilder.build());
                         break;
                 }
             }
@@ -392,13 +371,16 @@ public class Utility {
 
             @Override
             public void onPlay() {
-                if (!mp.isPlaying()) {
-                    mp.start();
+                if (audioFocus || audioManager.requestAudioFocus(focusListener, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN) == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
+                    if (!mp.isPlaying()) {
+                        mp.start();
+                    }
+                    playing = nowPlaying.get(nowPlayingPosition).get(playlistPosition.get(nowPlayingPosition));
+                    playbackBuilder.setState(PlaybackStateCompat.STATE_PLAYING, -1, 0);
+                    playbackBuilder.setActions(PlaybackStateCompat.ACTION_PLAY_PAUSE | PlaybackStateCompat.ACTION_PAUSE);
+                    mediaSession.setPlaybackState(playbackBuilder.build());
+                    audioFocus = true;
                 }
-                playing = nowPlaying.get(nowPlayingPosition).get(playlistPosition.get(nowPlayingPosition));
-                playbackBuilder.setState(PlaybackStateCompat.STATE_PLAYING, -1, 0);
-                playbackBuilder.setActions(PlaybackStateCompat.ACTION_PLAY_PAUSE | PlaybackStateCompat.ACTION_PAUSE);
-                mediaSession.setPlaybackState(playbackBuilder.build());
             }
 
             @Override
@@ -539,6 +521,8 @@ public class Utility {
                                 playing = null;
                                 playbackBuilder.setState(PlaybackStateCompat.STATE_STOPPED, -1, 0);
                                 mediaSession.setPlaybackState(playbackBuilder.build());
+                                audioManager.abandonAudioFocus(focusListener);
+                                audioFocus = false;
                                 return;
                             }
                         } else if (loop == LOOP_ALL) {
@@ -565,10 +549,21 @@ public class Utility {
             }
         };
 
+        AudioManager.OnAudioFocusChangeListener focusListener = new AudioManager.OnAudioFocusChangeListener() {
+            @Override
+            public void onAudioFocusChange(int focusChange) {
+                if (focusChange == AudioManager.AUDIOFOCUS_LOSS || focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT) {
+                    mediaCallback.onPause();
+                    audioFocus = false;
+                }
+            }
+        };
+
         @Override
         public void onCreate() {
             super.onCreate();
             Context context = getApplicationContext();
+            audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
             mediaSession = new MediaSessionCompat(context, "mediasession");
             mediaSession.setCallback(mediaCallback);
             mediaSession.setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS | MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS);
