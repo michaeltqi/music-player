@@ -20,7 +20,6 @@ import java.util.HashMap;
 import static com.michaelqi.musicplayer.MainActivity.albumGraphics;
 import static com.michaelqi.musicplayer.MainActivity.albumList;
 import static com.michaelqi.musicplayer.MainActivity.albums;
-//import static com.michaelqi.musicplayer.MainActivity.audioFocus;
 import static com.michaelqi.musicplayer.MainActivity.genres;
 import static com.michaelqi.musicplayer.MainActivity.gson;
 import static com.michaelqi.musicplayer.MainActivity.path;

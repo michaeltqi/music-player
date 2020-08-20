@@ -29,7 +29,6 @@ import com.google.android.material.tabs.TabLayout;
 import com.google.gson.Gson;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -176,9 +175,6 @@ public class MainActivity extends AppCompatActivity {
     public void onStop() {
         stop();
         super.onStop();
-        if (MediaControllerCompat.getMediaController(MainActivity.this) != null) {
-            MediaControllerCompat.getMediaController(MainActivity.this).unregisterCallback(controllerCallback);
-        }
         mediaBrowser.disconnect();
     }
 

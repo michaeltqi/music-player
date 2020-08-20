@@ -253,7 +253,6 @@ public class OnClickListener {
         public void onClick(View view) {
             MediaControllerCompat mediaController = MediaControllerCompat.getMediaController(activity);
             mediaController.getTransportControls().sendCustomAction("playpause", null);
-            //createNotification(activity);
         }
     }
 
@@ -299,7 +298,6 @@ public class OnClickListener {
             bundle.putBoolean("multiple", multiple);
             bundle.putBoolean("expand", true);
             MediaControllerCompat.getMediaController(activity).getTransportControls().sendCustomAction("playsong", bundle);
-//            Utility.createNotification(activity);
         }
     }
 
@@ -323,7 +321,6 @@ public class OnClickListener {
             bundle.putString("update", "true");
             bundle.putBoolean("expand", true);
             MediaControllerCompat.getMediaController(activity).getTransportControls().sendCustomAction("playsonglist", bundle);
-//            Utility.createNotification(activity);
         }
     }
 
