@@ -296,28 +296,19 @@ public class MainActivity extends AppCompatActivity {
         seekBar.setMax(totalTime);
         String formattedDuration = Utility.formatDuration(totalTime);
         ((TextView) findViewById(R.id.TotalTime)).setText(formattedDuration);
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    int currentDuration = mp.getCurrentPosition() / 1000;
-                    seekBar.setProgress(currentDuration);
-                    String currentTime = Utility.formatDuration(currentDuration);
-                    ((TextView) findViewById(R.id.CurrentTime)).setText(currentTime);
-                } catch (IllegalStateException e) {}
-                handler.postDelayed(this, 1000);
-            }
-        });
-
         final SeekBar progressBar = findViewById(R.id.ProgressBar);
         progressBar.getProgressDrawable().setColorFilter(getResources().getColor(R.color.textPrimaryColor), PorterDuff.Mode.SRC_IN);
         progressBar.setMax(totalTime);
         handler.post(new Runnable() {
             @Override
             public void run() {
-                if (mp != null) {
-                    progressBar.setProgress(mp.getCurrentPosition() / 1000);
-                }
+                try {
+                    int currentDuration = mp.getCurrentPosition() / 1000;
+                    seekBar.setProgress(currentDuration);
+                    progressBar.setProgress(currentDuration);
+                    String currentTime = Utility.formatDuration(currentDuration);
+                    ((TextView) findViewById(R.id.CurrentTime)).setText(currentTime);
+                } catch (IllegalStateException e) {}
                 handler.postDelayed(this, 1000);
             }
         });
