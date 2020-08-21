@@ -28,7 +28,7 @@ import static com.michaelqi.musicplayer.MainActivity.nowPlaying;
 import static com.michaelqi.musicplayer.MainActivity.nowPlayingPosition;
 import static com.michaelqi.musicplayer.MainActivity.playing;
 
-public class Adapter {
+class Adapter {
 
     /* Adapter for adding a song to a playlist */
     static class AddPlaylist extends ArrayAdapter<String> {
@@ -36,7 +36,7 @@ public class Adapter {
         int resource;
         List<String> playlists;
 
-        public AddPlaylist(Context context, int resource, List<String> playlists) {
+        AddPlaylist(Context context, int resource, List<String> playlists) {
             super(context, resource, playlists);
             this.context = context;
             this.resource = resource;
@@ -64,9 +64,9 @@ public class Adapter {
             this.mmr = new MediaMetadataRetriever();
         }
 
-        public static class AlbumViewHolder extends RecyclerView.ViewHolder {
+        static class AlbumViewHolder extends RecyclerView.ViewHolder {
             View view;
-            public AlbumViewHolder(View view) {
+            AlbumViewHolder(View view) {
                 super(view);
                 this.view = view;
             }
@@ -167,7 +167,7 @@ public class Adapter {
 
     /* Manages four main fragments of the app */
     static class MusicPager extends FragmentPagerAdapter {
-        public MusicPager(FragmentManager fragmentManager) {
+        MusicPager(FragmentManager fragmentManager) {
             super(fragmentManager);
         }
 
@@ -254,7 +254,7 @@ public class Adapter {
         int resource;
         ArrayList<String> playlists;
 
-        public Playlist(Context context, int resource, ArrayList<String> playlists) {
+        Playlist(Context context, int resource, ArrayList<String> playlists) {
             super(context, resource, playlists);
             this.context = context;
             this.resource = resource;
@@ -292,17 +292,17 @@ public class Adapter {
             this.headerOffset = header == null ? 0 : 1;
         }
 
-        public static class HeaderViewHolder extends RecyclerView.ViewHolder {
+        static class HeaderViewHolder extends RecyclerView.ViewHolder {
             View view;
-            public HeaderViewHolder(View view) {
+            HeaderViewHolder(View view) {
                 super(view);
                 this.view = view;
             }
         }
 
-        public static class SongViewHolder extends RecyclerView.ViewHolder {
+        static class SongViewHolder extends RecyclerView.ViewHolder {
             View view;
-            public SongViewHolder(View view) {
+            SongViewHolder(View view) {
                 super(view);
                 this.view = view;
             }

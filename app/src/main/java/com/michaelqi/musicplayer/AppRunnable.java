@@ -26,7 +26,7 @@ import static com.michaelqi.musicplayer.MainActivity.path;
 import static com.michaelqi.musicplayer.MainActivity.playlists;
 import static com.michaelqi.musicplayer.MainActivity.songs;
 
-public class AppRunnable {
+class AppRunnable {
 
     /* Manages replacing the screen with a new fragment */
     static class AddBodyFragment implements Runnable {

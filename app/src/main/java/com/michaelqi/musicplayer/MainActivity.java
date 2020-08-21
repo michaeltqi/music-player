@@ -198,10 +198,8 @@ public class MainActivity extends AppCompatActivity {
                     if (timestamp.get(nowPlayingPosition) >= 0) {
                         mediaController.getTransportControls().seekTo(timestamp.get(nowPlayingPosition));
                     }
-                } else {
-                    MediaControllerCompat.getMediaController(MainActivity.this).getTransportControls().sendCustomAction("resume", null);
+                    MediaControllerCompat.getMediaController(MainActivity.this).registerCallback(controllerCallback);
                 }
-            MediaControllerCompat.getMediaController(MainActivity.this).registerCallback(controllerCallback);
         } catch (RemoteException e) {}
     }
 
@@ -301,12 +299,12 @@ public class MainActivity extends AppCompatActivity {
         handler.post(new Runnable() {
             @Override
             public void run() {
-                if (mp != null) {
+                try {
                     int currentDuration = mp.getCurrentPosition() / 1000;
                     seekBar.setProgress(currentDuration);
                     String currentTime = Utility.formatDuration(currentDuration);
                     ((TextView) findViewById(R.id.CurrentTime)).setText(currentTime);
-                }
+                } catch (IllegalStateException e) {}
                 handler.postDelayed(this, 1000);
             }
         });

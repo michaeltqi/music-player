@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -30,7 +29,6 @@ import android.view.View;
 import android.widget.ImageView;
 
 import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
 import androidx.media.MediaBrowserServiceCompat;
 import androidx.media.session.MediaButtonReceiver;
 import androidx.palette.graphics.Palette;
@@ -213,7 +211,6 @@ public class Utility {
         AudioManager audioManager;
         boolean audioFocus = false;
         final long ACTIONS = PlaybackStateCompat.ACTION_PLAY_PAUSE | PlaybackStateCompat.ACTION_STOP | PlaybackStateCompat.ACTION_SKIP_TO_NEXT | PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS;
-        String updateOnResume = "false";
         MediaSessionCompat.Callback mediaCallback = new MediaSessionCompat.Callback() {
             @Override
             public void onCustomAction(String action, Bundle extras) {
@@ -240,21 +237,10 @@ public class Utility {
                     case "shuffle":
                         shuffle();
                         break;
-                    case "resume":
-                        buildMedia(updateOnResume);
-                        if (mp.isPlaying()) {
-                            playbackBuilder.setState(PlaybackStateCompat.STATE_PLAYING, -1, 0);
-                            playbackBuilder.setActions(PlaybackStateCompat.ACTION_PLAY_PAUSE | PlaybackStateCompat.ACTION_PAUSE);
-                        } else {
-                            playbackBuilder.setState(PlaybackStateCompat.STATE_PAUSED, -1, 0);
-                            playbackBuilder.setActions(PlaybackStateCompat.ACTION_PLAY_PAUSE | PlaybackStateCompat.ACTION_PLAY);
-                        }
-                        mediaSession.setPlaybackState(playbackBuilder.build());
-                        break;
                 }
             }
 
-            public void playSong(final Bundle extras) {
+            void playSong(final Bundle extras) {
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
@@ -290,7 +276,7 @@ public class Utility {
                 }).start();
             }
 
-            public void playSongList(final Bundle extras) {
+            void playSongList(final Bundle extras) {
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
@@ -377,7 +363,7 @@ public class Utility {
                 onSkip(i, "false");
             }
 
-            public void onSkip(long i, String update) {
+            void onSkip(long i, String update) {
                 int position = (int) i;
                 playlistPosition.set(nowPlayingPosition, position);
                 playing = nowPlaying.get(nowPlayingPosition).get(position);
@@ -385,12 +371,12 @@ public class Utility {
                 onPlay();
             }
 
-            public void loop() {
+            void loop() {
                 loop = (loop + 1) % 3;
                 buildMedia("false");
             }
 
-            public void shuffle() {
+            void shuffle() {
                 shuffle = !shuffle;
                 if (shuffle) {
                     Music current = nowPlaying.get(nowPlayingPosition).remove((int) playlistPosition.get(nowPlayingPosition));
@@ -409,11 +395,8 @@ public class Utility {
                 onPrepare("true");
             }
 
-            public void onPrepare(String update) {
+            void onPrepare(String update) {
                 mediaBuilder = new MediaMetadataCompat.Builder();
-                if (mp.isPlaying()) {
-                    onStop();
-                }
                 if (playing == null) {
                     mediaBuilder.putString("update", "false");
                     mediaSession.setMetadata(mediaBuilder.build());
@@ -435,7 +418,7 @@ public class Utility {
                 stopSelf();
             }
 
-            public void buildMedia(String update) {
+            void buildMedia(String update) {
                 mmr.setDataSource(playing.getPath());
                 mp.setOnCompletionListener(MusicService.this);
                 mediaBuilder.putString(MediaMetadataCompat.METADATA_KEY_TITLE, playing.getTitle());
@@ -454,7 +437,7 @@ public class Utility {
                 mediaSession.setMetadata(mediaBuilder.build());
             }
 
-            public void createNotification(int icon) {
+            void createNotification(int icon) {
                 Context context = getApplicationContext();
                 Bitmap art;
                 byte[] image = mmr.getEmbeddedPicture();
@@ -525,7 +508,6 @@ public class Utility {
                 }
                 Bundle bundle = new Bundle();
                 bundle.putString("update", update);
-                updateOnResume = update;
                 mediaCallback.onCustomAction("prepare", bundle);
                 mediaCallback.onPlay();
             }
@@ -600,7 +582,7 @@ public class Utility {
     }
 
     /* Gets dominant color from palette */
-    static int paletteColor(Activity activity, Palette palette) {
+    private static int paletteColor(Activity activity, Palette palette) {
         int color = palette.getMutedColor(activity.getResources().getColor(R.color.colorPrimaryDark));
         color = palette.getDarkMutedColor(color);
         color = palette.getVibrantColor(color);
