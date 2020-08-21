@@ -181,26 +181,6 @@ public class Utility {
 
         activity.registerReceiver(new NoisyReceiver(activity), new IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY));
         createNotificationChannel(activity);
-        BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                Activity activity = (Activity) context;
-                String action = intent.getStringExtra("action");
-                MediaControllerCompat.TransportControls controls = MediaControllerCompat.getMediaController(activity).getTransportControls();
-                switch (action) {
-                    case "playpause":
-                        controls.sendCustomAction("playpause", null);
-                        break;
-                    case "previous":
-                        controls.skipToPrevious();
-                        break;
-                    case "next":
-                        controls.skipToNext();
-                        break;
-                }
-            }
-        };
-        activity.registerReceiver(broadcastReceiver, new IntentFilter("action"));
     }
 
     /* Implements media session */

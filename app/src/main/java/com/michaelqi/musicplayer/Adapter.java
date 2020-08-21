@@ -102,6 +102,7 @@ class Adapter {
     /* Adapter for album images in full screen sliding pane */
     static class AlbumImage extends PagerAdapter {
         Activity activity;
+        static MediaMetadataRetriever pagerMMR = new MediaMetadataRetriever();
 
         AlbumImage(Activity activity) {
             this.activity = activity;
@@ -119,8 +120,8 @@ class Adapter {
 
         @Override
         public Object instantiateItem(ViewGroup container, int position) {
-            mmr.setDataSource(nowPlaying.get(nowPlayingPosition).get(position).getPath());
-            byte[] image = mmr.getEmbeddedPicture();
+            pagerMMR.setDataSource(nowPlaying.get(nowPlayingPosition).get(position).getPath());
+            byte[] image = pagerMMR.getEmbeddedPicture();
 
             View view = LayoutInflater.from(activity).inflate(R.layout.album_image, container, false);
             if (image == null) {

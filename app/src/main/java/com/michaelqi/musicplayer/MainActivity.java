@@ -305,9 +305,9 @@ public class MainActivity extends AppCompatActivity {
                 try {
                     int currentDuration = mp.getCurrentPosition() / 1000;
                     seekBar.setProgress(currentDuration);
-                    progressBar.setProgress(currentDuration);
                     String currentTime = Utility.formatDuration(currentDuration);
                     ((TextView) findViewById(R.id.CurrentTime)).setText(currentTime);
+                    progressBar.setProgress(currentDuration);
                 } catch (IllegalStateException e) {}
                 handler.postDelayed(this, 1000);
             }
