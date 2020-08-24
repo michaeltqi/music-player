@@ -1,7 +1,6 @@
 package com.michaelqi.musicplayer;
 
 import android.content.ComponentName;
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.PorterDuff;
@@ -11,6 +10,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Bundle;
 import android.os.RemoteException;
+import android.preference.PreferenceManager;
 import android.support.v4.media.MediaBrowserCompat;
 import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.MediaControllerCompat;
@@ -85,6 +85,7 @@ public class MainActivity extends AppCompatActivity {
         }
     };
     MediaControllerCompat.Callback controllerCallback = new MediaControllerCompat.Callback() {
+        /* Runs when MusicService builds MediaMetadata */
         @Override
         public void onMetadataChanged(MediaMetadataCompat metadata) {
             if (metadata.getString("update").equals("true")) {
@@ -116,6 +117,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
+        /* Runs when MusicService builds PlaybackState */
         @Override
         public void onPlaybackStateChanged(PlaybackStateCompat state) {
             if (state.getState() == PlaybackStateCompat.STATE_STOPPED) {
@@ -173,7 +175,6 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onStop() {
-        stop();
         super.onStop();
         mediaBrowser.disconnect();
     }
@@ -188,6 +189,8 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /* Creates MediaSession when app first starts */
+    // TODO: Rethink/refactor
     void setupMedia() {
         try {
                 if (!started) {
@@ -239,7 +242,7 @@ public class MainActivity extends AppCompatActivity {
             ((ImageView) findViewById(R.id.ShufflePlaylist)).
                     setColorFilter(getResources().getColor(R.color.textPrimaryColor));
         } else {
-            ((ImageView) findViewById(R.id.LoopPlaylist)).
+            ((ImageView) findViewById(R.id.ShufflePlaylist)).
                     setColorFilter(getResources().getColor(R.color.colorSecondaryDark));
         }
 
@@ -257,22 +260,6 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
         });
-    }
-
-    void setupSong(String title, String artist, Bitmap art, long duration) {
-        int icon = started ? R.drawable.pause : R.drawable.play;
-        ((ImageView) findViewById(R.id.PlayPause)).setImageResource(icon);
-        ((ImageView) findViewById(R.id.PlayPauseB)).setImageResource(icon);
-
-        ((TextView) findViewById(R.id.SongTitle)).setText(title);
-        ((TextView) findViewById(R.id.BottomTitle)).setText(title);
-        ((TextView) findViewById(R.id.AlbumArtist)).setText(artist);
-        ((TextView) findViewById(R.id.BottomArtist)).setText(artist);
-
-        ((ImageView) findViewById(R.id.Background)).setImageBitmap(art);
-        ((ImageView) findViewById(R.id.AlbumIcon)).setImageBitmap(art);
-
-        int totalTime = (int) (duration / 1000);
         final SeekBar seekBar = findViewById(R.id.SeekBar);
         seekBar.getProgressDrawable().setColorFilter(getResources().getColor(R.color.colorPrimary), PorterDuff.Mode.SRC_IN);
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -293,66 +280,50 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-        seekBar.setMax(totalTime);
-        String formattedDuration = Utility.formatDuration(totalTime);
-        ((TextView) findViewById(R.id.TotalTime)).setText(formattedDuration);
         final SeekBar progressBar = findViewById(R.id.ProgressBar);
         progressBar.getProgressDrawable().setColorFilter(getResources().getColor(R.color.textPrimaryColor), PorterDuff.Mode.SRC_IN);
-        progressBar.setMax(totalTime);
         handler.post(new Runnable() {
             @Override
             public void run() {
-                try {
-                    int currentDuration = mp.getCurrentPosition() / 1000;
-                    seekBar.setProgress(currentDuration);
-                    String currentTime = Utility.formatDuration(currentDuration);
-                    ((TextView) findViewById(R.id.CurrentTime)).setText(currentTime);
-                    progressBar.setProgress(currentDuration);
-                } catch (IllegalStateException e) {}
+                if (started) {
+                    try {
+                        int time = mp.getCurrentPosition();
+                        timestamp.set(nowPlayingPosition, time);
+                        int currentDuration = time / 1000;
+                        seekBar.setProgress(currentDuration);
+                        String currentTime = Utility.formatDuration(currentDuration);
+                        ((TextView) findViewById(R.id.CurrentTime)).setText(currentTime);
+                        progressBar.setProgress(currentDuration);
+                        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(MainActivity.this).edit();
+                        String json = gson.toJson(timestamp);
+                        editor.putString("Timestamp", json);
+                        editor.apply();
+                    } catch (IllegalStateException e) {}
+                }
                 handler.postDelayed(this, 1000);
             }
         });
-        started = true;
     }
 
-    /* Manages saving data upon ending fragment */
-    void stop() {
-        SharedPreferences.Editor editor = getPreferences(Context.MODE_PRIVATE).edit();
-        String json;
-        if (playing == null) {
-            ArrayList<ArrayList<Music>> nullSongList = new ArrayList<>();
-            nullSongList.add(new ArrayList<Music>());
+    /* Updates images, titles, and artists when the song changes */
+    void setupSong(String title, String artist, Bitmap art, long duration) {
+        int icon = started ? R.drawable.pause : R.drawable.play;
+        ((ImageView) findViewById(R.id.PlayPause)).setImageResource(icon);
+        ((ImageView) findViewById(R.id.PlayPauseB)).setImageResource(icon);
 
-            json = gson.toJson(nullSongList);
-            editor.putString("Now Playing", json);
-            editor.putString("Original", json);
+        ((TextView) findViewById(R.id.SongTitle)).setText(title);
+        ((TextView) findViewById(R.id.BottomTitle)).setText(title);
+        ((TextView) findViewById(R.id.AlbumArtist)).setText(artist);
+        ((TextView) findViewById(R.id.BottomArtist)).setText(artist);
 
-            editor.putInt("Now Playing Position", nowPlayingPosition);
+        ((ImageView) findViewById(R.id.Background)).setImageBitmap(art);
+        ((ImageView) findViewById(R.id.AlbumIcon)).setImageBitmap(art);
 
-            ArrayList<Integer> nullIntList = new ArrayList<>();
-            nullIntList.add(0);
-
-            json = gson.toJson(nullIntList);
-            editor.putString("Playlist Position", json);
-            editor.putString("Timestamp", json);
-        } else {
-            json = gson.toJson(nowPlaying);
-            editor.putString("Now Playing", json);
-
-            json = gson.toJson(original);
-            editor.putString("Original", json);
-
-            editor.putInt("Now Playing Position", nowPlayingPosition);
-
-            json = gson.toJson(playlistPosition);
-            editor.putString("Playlist Position", json);
-
-            timestamp.set(nowPlayingPosition, mp == null ? -1 : mp.getCurrentPosition());
-            json = gson.toJson(timestamp);
-            editor.putString("Timestamp", json);
-        }
-        editor.putBoolean("Shuffle", shuffle);
-        editor.putInt("Loop", loop);
-        editor.apply();
+        int totalTime = (int) (duration / 1000);
+        ((SeekBar) findViewById(R.id.SeekBar)).setMax(totalTime);
+        String formattedDuration = Utility.formatDuration(totalTime);
+        ((TextView) findViewById(R.id.TotalTime)).setText(formattedDuration);
+        ((SeekBar) findViewById(R.id.ProgressBar)).setMax(totalTime);
+        started = true;
     }
 }

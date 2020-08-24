@@ -106,9 +106,9 @@ public class Fragments {
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             View layout = inflater.inflate(R.layout.page_genre, container, false);
-            ArrayList<String> g = new ArrayList<>(genres.keySet());
-            Collections.sort(g, new Music.StringComparator());
-            ((ListView) layout.findViewById(R.id.Genres)).setAdapter(new Adapter.Genre(getContext(), R.layout.row_genre, g));
+            ArrayList<String> genreList = new ArrayList<>(genres.keySet());
+            Collections.sort(genreList, new Music.StringComparator());
+            ((ListView) layout.findViewById(R.id.Genres)).setAdapter(new Adapter.Genre(getContext(), R.layout.row_genre, genreList));
             ((ListView) layout.findViewById(R.id.Genres)).setOnItemClickListener(new OnClickListener.Genre(getActivity()));
             return layout;
         }

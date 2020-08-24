@@ -19,6 +19,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.preference.PreferenceManager;
 import android.support.v4.media.MediaBrowserCompat;
 import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.MediaControllerCompat;
@@ -44,6 +45,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.prefs.PreferenceChangeEvent;
 
 import static com.michaelqi.musicplayer.MainActivity.LOOP_ALL;
 import static com.michaelqi.musicplayer.MainActivity.LOOP_CURRENT;
@@ -144,7 +146,7 @@ public class Utility {
         }).start();
 
         handler = new Handler(Looper.getMainLooper());
-        SharedPreferences sharedPreferences = activity.getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity);
         Type type = new TypeToken<HashMap<String, ArrayList<Music>>>(){}.getType();
         if (!sharedPreferences.getString("Playlists", "").equals("")) {
             playlists = gson.fromJson(sharedPreferences.getString("Playlists", ""), type);
@@ -183,7 +185,7 @@ public class Utility {
         createNotificationChannel(activity);
     }
 
-    /* Implements media session */
+    /* Implements media browser */
     public static class MusicService extends MediaBrowserServiceCompat implements MediaPlayer.OnCompletionListener, AudioManager.OnAudioFocusChangeListener {
         MediaSessionCompat mediaSession;
         PlaybackStateCompat.Builder playbackBuilder;
@@ -220,6 +222,7 @@ public class Utility {
                 }
             }
 
+            /* Plays song when selected from list */
             void playSong(final Bundle extras) {
                 new Thread(new Runnable() {
                     @Override
@@ -256,6 +259,7 @@ public class Utility {
                 }).start();
             }
 
+            /* Plays song from shuffle/playlist buttons */
             void playSongList(final Bundle extras) {
                 new Thread(new Runnable() {
                     @Override
@@ -292,6 +296,7 @@ public class Utility {
                     mediaSession.setPlaybackState(playbackBuilder.build());
                     audioFocus = true;
                     createNotification(R.drawable.pause_small);
+                    save();
                 }
             }
 
@@ -343,6 +348,7 @@ public class Utility {
                 onSkip(i, "false");
             }
 
+            /* Handles skips with parameter to update view pager */
             void onSkip(long i, String update) {
                 int position = (int) i;
                 playlistPosition.set(nowPlayingPosition, position);
@@ -354,6 +360,9 @@ public class Utility {
             void loop() {
                 loop = (loop + 1) % 3;
                 buildMedia("false");
+                SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit();
+                editor.putInt("Loop", loop);
+                editor.apply();
             }
 
             void shuffle() {
@@ -368,6 +377,9 @@ public class Utility {
                     playlistPosition.set(nowPlayingPosition, original.get(nowPlayingPosition).indexOf(playing));
                 }
                 buildMedia("true");
+                SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit();
+                editor.putBoolean("Shuffle", shuffle);
+                editor.apply();
             }
 
             @Override
@@ -375,6 +387,7 @@ public class Utility {
                 onPrepare("true");
             }
 
+            /* Prepares song with parameter to update view pager */
             void onPrepare(String update) {
                 mediaBuilder = new MediaMetadataCompat.Builder();
                 if (playing == null) {
@@ -389,15 +402,10 @@ public class Utility {
 
             @Override
             public void onStop() {
-                mp.stop();
-                playing = null;
-                playbackBuilder.setState(PlaybackStateCompat.STATE_STOPPED, -1, 0);
-                mediaSession.setPlaybackState(playbackBuilder.build());
-                audioManager.abandonAudioFocus(MusicService.this);
-                audioFocus = false;
-                stopSelf();
+                onPause();
             }
 
+            /* Updates and builds MediaMetadata */
             void buildMedia(String update) {
                 mmr.setDataSource(playing.getPath());
                 mp.setOnCompletionListener(MusicService.this);
@@ -447,6 +455,21 @@ public class Utility {
                         .build();
                 startForeground(1, notification);
             }
+
+            /* Modifies shared preferences when new song is played */
+            void save() {
+                SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit();
+                String json;
+                json = gson.toJson(nowPlaying);
+                editor.putString("Now Playing", json);
+
+                json = gson.toJson(original);
+                editor.putString("Original", json);
+
+                editor.putInt("Now Playing Position", nowPlayingPosition);
+                editor.putString("Playlist Position", gson.toJson(playlistPosition));
+                editor.apply();
+            }
         };
 
         @Override
@@ -469,6 +492,13 @@ public class Utility {
                             mediaSession.setPlaybackState(playbackBuilder.build());
                             audioManager.abandonAudioFocus(this);
                             audioFocus = false;
+                            SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit();
+                            editor.remove("Now Playing");
+                            editor.remove("Original");
+                            editor.remove("Now Playing Position");
+                            editor.remove("Playlist Position");
+                            editor.apply();
+                            stopSelf();
                             return;
                         }
                     } else if (loop == LOOP_ALL) {

@@ -187,19 +187,10 @@ class AppRunnable {
             }
             database.close();
 
-            SharedPreferences.Editor editor = activity.getPreferences(Context.MODE_PRIVATE).edit();
             albums = albumRefresh;
-            String json = gson.toJson(albums);
-            editor.putString("Albums", json);
-
             albumList = new ArrayList<>(albums.keySet());
             Collections.sort(albumList, new Music.StringComparator());
-
             genres = genreRefresh;
-            json = gson.toJson(genres);
-            editor.putString("Genres", json);
-
-            editor.apply();
 
             activity.runOnUiThread(new Runnable() {
                 @Override
